@@ -9,7 +9,7 @@ You can [use Binder to execute the project online](https://mybinder.org/v2/gh/fu
 
 To locally running the project, you first need to checkout the project including subproject and compile ABECTO:
 ```
-git clone https://github.com/fusion-jena/abecto-unit-ontology-comparison.git
+git clone --recursive https://github.com/fusion-jena/abecto-unit-ontology-comparison.git
 mvn -f abecto-unit-ontology-comparison/abecto -B -Dmaven.test.skip=true install
 ```
 Then open the notebook:
