@@ -2,7 +2,7 @@
 
 # Comparison and Evaluation of Unit Ontologies with ABECTO
 
-This is a [ABECTO](https://github.com/fusion-jena/abecto) project to compare and evaluate unit ontologies.
+This is a project to compare and evaluate unit ontologies using  [ABECTO](https://github.com/fusion-jena/abecto).
 
 ## Execution
 You can [use Binder to execute the project online](https://mybinder.org/v2/gh/fusion-jena/abecto-unit-ontology-comparison.git/master?filepath=abecto-unit-ontology-comparison.ipynb).
