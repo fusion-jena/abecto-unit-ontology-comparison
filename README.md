@@ -20,8 +20,8 @@ jupyter notebook abecto-unit-ontology-comparison/abecto-unit-ontology-comparison
 ## Licenses
 
 * [ABECTO](https://github.com/fusion-jena/abecto) is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-* This comparison project, excluding ontology files in [ontology/](ontology/) and derived data in [.abecto/](abecto/), is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-* The ontologies in [ontology/](ontology/) and the respective derived data in [.abecto/](abecto/) are licensed as follows:
+* This comparison project, excluding the data derived from the compared ontologys in [.abecto/](abecto/), is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+* The data in [.abecto/](abecto/) are derived from the compared ontologies, which are licensed as follows:
 	* [OM 2](https://github.com/HajoRijgersberg/OM) by Hajo Rijgersberg, Don Willems, Jan Top ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
 	* [QUDT 2](http://qudt.org/) by QUDT.org ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
 	* [SWEET 3](https://github.com/ESIPFed/sweet) is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
