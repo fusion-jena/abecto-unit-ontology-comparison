@@ -1,2 +1,0 @@
-#!/bin/bash
-mvn -f abecto -B -Dmaven.test.skip=true install
