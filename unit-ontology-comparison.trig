@@ -13,7 +13,6 @@ _:plan a av:Plan ;
     rdfs:label "Unit Ontology Comparison"@en;
     .
 
-
 _:aspectUnit a av:Aspect ;
     av:keyVariableName "unit" ;
     .
@@ -22,18 +21,25 @@ _:aspectUnit a av:Aspect ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
     av:definingQuery """
         PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum
+        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum ?sameAs
         WHERE {
             ?unit a/rdfs:subClassOf* om:Unit .
             OPTIONAL { ?unit rdfs:label|om:alternativeLabel  ?label }
             OPTIONAL { ?unit om:symbol ?symbol }
             OPTIONAL { ?unit rdfs:comment ?definition }
             OPTIONAL { ?unit ^om:commonlyHasUnit ?quantityKind }
-            OPTIONAL { ?unit skos:notation ?ucum }
+            OPTIONAL {
+                ?unit skos:notation ?ucumTmp .
+                BIND(str(?ucumTmp) AS ?ucum)
+            }
+            OPTIONAL { ?unit owl:sameAs ?sameAs }
         }
     """^^av:SparqlQuery ;
+    av:hasVariablePath
+        [ a av:VariablePath ; av:propertyPath "<http://www.w3.org/2004/02/skos/core#notation>"^^av:SparqlPropertyPath ; av:variableName "ucum" ] ;
     .
 []  a av:AspectPattern ;
     av:ofAspect _:aspectUnit ;
@@ -42,15 +48,22 @@ _:aspectUnit a av:Aspect ;
         PREFIX qudt: <http://qudt.org/schema/qudt/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?unit ?label ?symbol ?definition ?quantityKind
+        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum ?sameAs
         WHERE {
             ?unit a/rdfs:subClassOf* qudt:Unit .
             OPTIONAL { ?unit qudt:description ?definition }
             OPTIONAL { ?unit qudt:symbol ?symbol }
-            OPTIONAL { ?unit rdfs:label|skos:prefLabel|skos:altLabel ?label }
+            OPTIONAL { { ?unit rdfs:label ?label } UNION { ?unit skos:prefLabel ?label } UNION { ?unit skos:altLabel ?label } }
             OPTIONAL { ?unit qudt:hasQuantityKind ?quantityKind }
+            OPTIONAL {
+                ?unit qudt:ucumCode ?ucumTmp .
+                BIND(str(?ucumTmp) AS ?ucum)
+            }
+            OPTIONAL { ?unit qudt:omUnit ?sameAs }
         }
     """^^av:SparqlQuery ;
+    av:hasVariablePath
+        [ a av:VariablePath ; av:propertyPath "<http://qudt.org/schema/qudt/ucumCode>"^^av:SparqlPropertyPath ; av:variableName "ucum" ] ;
     .
 []  a av:AspectPattern ;
     av:ofAspect _:aspectUnit ;
@@ -116,7 +129,7 @@ _:aspectQuantityKind a av:Aspect ;
         PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        SELECT ?quantityKind ?label ?dimensionVector
+        SELECT ?quantityKind ?label ?amountOfSubstanceDimensionExponent ?electricCurrentDimensionExponent ?lengthDimensionExponent ?luminousIntensityDimensionExponent ?massDimensionExponent ?temperatureDimensionExponent ?timeDimensionExponent
         WHERE {
             ?quantityKind
                 rdfs:subClassOf
@@ -130,7 +143,16 @@ _:aspectQuantityKind a av:Aspect ;
                     rdfs:subClassOf [
                         a owl:Restriction ;
                         owl:onProperty om:hasDimension ;
-                        owl:hasValue ?dimensionVector
+                        owl:hasValue [
+                            a om:Dimension ;
+                            om:hasSIAmountOfSubstanceDimensionExponent        ?amountOfSubstanceDimensionExponent ;
+                            om:hasSIElectricCurrentDimensionExponent          ?electricCurrentDimensionExponent ;
+                            om:hasSILengthDimensionExponent                   ?lengthDimensionExponent ;
+                            om:hasSILuminousIntensityDimensionExponent        ?luminousIntensityDimensionExponent ;
+                            om:hasSIMassDimensionExponent                     ?massDimensionExponent ;
+                            om:hasSIThermodynamicTemperatureDimensionExponent ?temperatureDimensionExponent ;
+                            om:hasSITimeDimensionExponent                     ?timeDimensionExponent
+                        ]
                     ] .
             }
         }
@@ -142,12 +164,21 @@ _:aspectQuantityKind a av:Aspect ;
     av:definingQuery """
         PREFIX qudt: <http://qudt.org/schema/qudt/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT ?quantityKind ?label ?symbol ?dimensionVector
+        SELECT ?quantityKind ?label ?symbol ?amountOfSubstanceDimensionExponent ?electricCurrentDimensionExponent ?lengthDimensionExponent ?luminousIntensityDimensionExponent ?massDimensionExponent ?temperatureDimensionExponent ?timeDimensionExponent
         WHERE {
             ?quantityKind a qudt:QuantityKind ;
                           rdfs:label ?label ;
                           qudt:symbol ?symbol ;
-                          qudt:hasDimensionVector ?dimensionVector
+                          qudt:hasDimensionVector ?dimensionVector .
+            ?dimensionVector a/rdfs:subClassOf*                                qudt:QuantityKindDimensionVector ;
+                             qudt:dimensionExponentForAmountOfSubstance        ?amountOfSubstanceDimensionExponent ;
+                             qudt:dimensionExponentForElectricCurrent          ?electricCurrentDimensionExponent ;
+                             qudt:dimensionExponentForLength                   ?lengthDimensionExponent ;
+                             qudt:dimensionExponentForLuminousIntensity        ?luminousIntensityDimensionExponent ;
+                             qudt:dimensionExponentForMass                     ?massDimensionExponent ;
+                             qudt:dimensionExponentForThermodynamicTemperature ?temperatureDimensionExponent ;
+                             qudt:dimensionExponentForTime                     ?timeDimensionExponent ;
+                             qudt:dimensionlessExponent                        ?dimensionlessExponent .
         }
     """^^av:SparqlQuery ;
     .
@@ -159,91 +190,30 @@ _:aspectQuantityKind a av:Aspect ;
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-        SELECT ?quantityKind ?label ?symbol ?dimensionVector
+        SELECT ?quantityKind ?label ?symbol ?amountOfSubstanceDimensionExponent ?electricCurrentDimensionExponent ?lengthDimensionExponent ?luminousIntensityDimensionExponent ?massDimensionExponent ?temperatureDimensionExponent ?timeDimensionExponent
         WHERE {
-            OPTIONAL { { ?unit rdfs:label ?label } UNION { ?unit skos:altLabel ?label } }
-            OPTIONAL {?quantity wdt:P7973 ?latexSymbol .}
+            OPTIONAL { { ?quantity rdfs:label ?label } UNION { ?quantity skos:altLabel ?label } }
+            OPTIONAL { ?quantity wdt:P7973 ?symbol }
             OPTIONAL {
                 ?quantityKind wdt:P4020 ?dimensionLabel .
-                BIND(CONCAT("urn:wd:dimension:N", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {N}}^{"),"}")),0)),
-                                            "I", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {I}}^{"),"}")),0)),
-                                            "L", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {L}}^{"),"}")),0)),
-                                            "J", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {J}}^{"),"}")),0)),
-                                            "M", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {M}}^{"),"}")),0)),
-                                            "Θ", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {Θ}}^{"),"}")),0)),
-                                            "T", STR(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {T}}^{"),"}")),0)))
-                                            AS ?dimensionVector)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {N}}^{"),"}")),0) AS ?amountOfSubstanceDimensionExponent)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {I}}^{"),"}")),0) AS ?electricCurrentDimensionExponent)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {L}}^{"),"}")),0) AS ?lengthDimensionExponent)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {J}}^{"),"}")),0) AS ?luminousIntensityDimensionExponent)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {M}}^{"),"}")),0) AS ?massDimensionExponent)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {Θ}}^{"),"}")),0) AS ?temperatureDimensionExponent)
+                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {T}}^{"),"}")),0) AS ?timeDimensionExponent)
             }
         }
     """^^av:SparqlQuery ;
-    .
-
-_:aspectDimensionVector a av:Aspect ;
-    av:keyVariableName "dimensionVector" ;
-    .
-[]  a av:AspectPattern ;
-    av:ofAspect _:aspectDimensionVector ;
-    av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
-    av:definingQuery """
-        PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>
-        SELECT ?dimensionVector ?amountOfSubstanceExponent ?electricCurrentExponent ?lengthExponent ?luminousIntensityExponent ?massExponent ?tempExponent ?timeExponent
-        WHERE {
-            ?dimensionVector a om:Dimension ;
-                             om:hasSIAmountOfSubstanceDimensionExponent ?amountOfSubstanceExponent ;
-                             om:hasSIElectricCurrentDimensionExponent ?electricCurrentExponent ;
-                             om:hasSILengthDimensionExponent ?lengthExponent ;
-                             om:hasSILuminousIntensityDimensionExponent ?luminousIntensityExponent ;
-                             om:hasSIMassDimensionExponent ?massExponent ;
-                             om:hasSIThermodynamicTemperatureDimensionExponent ?tempExponent ;
-                             om:hasSITimeDimensionExponent ?timeExponent .
-        }
-    """^^av:SparqlQuery ;
-    .
-[]  a av:AspectPattern ;
-    av:ofAspect _:aspectDimensionVector ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:definingQuery """
-        PREFIX qudt: <http://qudt.org/schema/qudt/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT ?dimensionVector ?amountOfSubstanceExponent ?electricCurrentExponent ?lengthExponent ?luminousIntensityExponent ?massExponent ?tempExponent ?timeExponent
-        WHERE {
-            ?dimensionVector a/rdfs:subClassOf* qudt:QuantityKindDimensionVector ;
-                             qudt:dimensionExponentForAmountOfSubstance        ?amountOfSubstanceExponent ;
-                             qudt:dimensionExponentForElectricCurrent          ?electricCurrentExponent ;
-                             qudt:dimensionExponentForLength                   ?lengthExponent ;
-                             qudt:dimensionExponentForLuminousIntensity        ?luminousIntensityExponent ;
-                             qudt:dimensionExponentForMass                     ?massExponent ;
-                             qudt:dimensionExponentForThermodynamicTemperature ?tempExponent ;
-                             qudt:dimensionExponentForTime                     ?timeExponent ;
-                             qudt:dimensionlessExponent                        ?dimensionlessExponent .
-        }
-    """^^av:SparqlQuery ;
-    .
-[]  a av:AspectPattern ;
-    av:ofAspect _:aspectDimensionVector ;
-    av:associatedDataset <http://www.wikidata.org/> ;
-    av:definingQuery """
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-        SELECT ?dimensionVector ?amountOfSubstanceExponent ?electricCurrentExponent ?lengthExponent ?luminousIntensityExponent ?massExponent ?tempExponent ?timeExponent
-        WHERE {
-            [] wdt:P4020 ?dimension .
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {N}}^{"),"}")),0) AS ?amountOfSubstanceExponent)
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {I}}^{"),"}")),0) AS ?electricCurrentExponent)
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {L}}^{"),"}")),0) AS ?lengthExponent)
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {J}}^{"),"}")),0) AS ?luminousIntensityExponent)
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {M}}^{"),"}")),0) AS ?massExponent)
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {Θ}}^{"),"}")),0) AS ?tempExponent)
-            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimension),"\\\\mathsf {T}}^{"),"}")),0) AS ?timeExponent)
-            BIND(CONCAT("urn:wd:dimension:N", STR(?amountOfSubstanceExponent),
-                                        "I", STR(?electricCurrentExponent),
-                                        "L", STR(?lengthExponent),
-                                        "J", STR(?luminousIntensityExponent),
-                                        "M", STR(?massExponent),
-                                        "Θ", STR(?tempExponent),
-                                        "T", STR(?timeExponent)) AS ?dimensionVector)
-        }
-    """^^av:SparqlQuery ;
+    av:hasVariablePath
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "amountOfSubstanceDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "electricCurrentDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "lengthDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "luminousIntensityDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "massDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "temperatureDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "timeDimensionExponent" ] ;
     .
 
 _:om2Source a av:Step ;
@@ -338,18 +308,43 @@ _:wikidataSource a av:Step ;
                 PREFIX wd: <http://www.wikidata.org/entity/>
                 SELECT *
                 WHERE {
-                    ?unit wdt:P31/wdt:P279* wd:Q47574 . # units of measurement
-                    FILTER(NOT EXISTS { ?unit wdt:P31/wdt:P279* wd:Q8142 }) # without currencies
-                    FILTER(NOT EXISTS { ?unit wdt:P31/wdt:P279* wd:Q11639620 }) # without monetary subunits
+                    {
+                        # units of measurement
+                        ?item wdt:P31/wdt:P279* wd:Q47574 .
+                        FILTER(NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q8142 }) # without currencies
+                        FILTER(NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q11639620 }) # without monetary subunits
+                    }
+                    UNION
+                    {
+                        # quantity kind
+                        ?item wdt:P4020 [] .
+                    }
                 }
             """^^av:SparqlQuery ] ,
-        [av:key "maxDistance" ; av:value 1 ] ,
-        [av:key "languageFilterPatterns" ; av:value "en" ] ,
+        [av:key "chunkSize" ; av:value 100 ] ,
         [av:key "followUnlimited" ; av:value
             <http://www.wikidata.org/prop/direct/P279> ,
             <http://www.wikidata.org/prop/statement/value/P2442> ,
             <http://www.wikidata.org/prop/P2442> ] ,
-        [av:key "followInverse" ; av:value <http://www.w3.org/2002/07/owl#sameAs> ] ;
+        [av:key "ignoreInverse" ; av:value
+            <http://wikiba.se/ontology#quantityUnit>,
+            <http://www.wikidata.org/prop/qualifier/P642>,
+            <http://www.wikidata.org/prop/direct/P921>,
+            <http://www.wikidata.org/prop/statement/P921>,
+            <http://www.wikidata.org/prop/qualifier/P1013>,
+            <http://www.wikidata.org/prop/direct/P111>,
+            <http://www.wikidata.org/prop/statement/P111>,
+            <http://www.wikidata.org/prop/statement/P31>,
+            <http://www.wikidata.org/prop/direct/P31>,
+            <http://www.wikidata.org/prop/statement/P971>,
+            <http://www.wikidata.org/prop/direct/P971>,
+            <http://www.wikidata.org/prop/statement/P2670>,
+            <http://www.wikidata.org/prop/direct/P2670>,
+            <http://www.wikidata.org/prop/statement/P360>,
+            <http://www.wikidata.org/prop/direct/P360>,
+            <http://www.wikidata.org/prop/statement/P4224>,
+            <http://www.wikidata.org/prop/direct/P4224>,
+            <http://schema.org/about> ]
     .
 
 _:om2additionalLabels a av:Step ;
@@ -911,7 +906,7 @@ _:presentCorrespondences a av:Step ;
     av:predefinedMetaDataGraph _:manualCorrespondences ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
-        [av:key "assignmentPaths" ; av:value "<http://qudt.org/schema/qudt/omUnit>", "owl:sameAs" ] ;
+        [av:key "variable" ; av:value "sameAs" ] ;
     .
 
 _:unitUcumMapping a av:Step ;
@@ -955,14 +950,14 @@ _:unitComparison a av:Step ;
         [av:key "variables" ; av:value "symbol" ] ;
     .
 
-_:dimensionVectorComparison a av:Step ;
-    rdfs:label "Dimension Vector Comparison"@en;
+_:quantityKindComparison a av:Step ;
+    rdfs:label "Quantity Kind Comparison"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
     p-plan:isPrecededBy _:unitLabelMapping ;
     av:hasParameter
-        [av:key "aspect" ; av:value _:aspectDimensionVector ] ,
-        [av:key "variables" ; av:value "timeExponent", "luminousIntensityExponent", "dimensionlessExponent", "amountOfSubstanceExponent", "electricCurrentExponent", "tempExponent", "massExponent", "lengthExponent" ] ;
+        [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
+        [av:key "variables" ; av:value "label", "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
     .
 
 _:conversionMapping a av:Step ;
