@@ -24,7 +24,7 @@ _:aspectUnit a av:Aspect ;
         PREFIX owl: <http://www.w3.org/2002/07/owl#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum ?sameAs
+        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum ?sameAs ?zeroAt ?oneEqualsOfBase
         WHERE {
             ?unit a/rdfs:subClassOf* om:Unit .
             OPTIONAL { ?unit rdfs:label|om:alternativeLabel  ?label }
@@ -36,10 +36,16 @@ _:aspectUnit a av:Aspect ;
                 BIND(str(?ucumTmp) AS ?ucum)
             }
             OPTIONAL { ?unit owl:sameAs ?sameAs }
+            OPTIONAL { ?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase }
+            OPTIONAL {
+                ?unit ^om:hasUnit/om:hasOff-Set ?offset .
+                BIND(?offset*-1.0 AS ?zeroAt)
+            }
         }
     """^^av:SparqlQuery ;
     av:hasVariablePath
-        [ a av:VariablePath ; av:propertyPath "<http://www.w3.org/2004/02/skos/core#notation>"^^av:SparqlPropertyPath ; av:variableName "ucum" ] ;
+        [ a av:VariablePath ; av:propertyPath "<http://www.w3.org/2004/02/skos/core#notation>"^^av:SparqlPropertyPath ; av:variableName "ucum" ],
+        [ a av:VariablePath ; av:propertyPath "^<http://www.ontology-of-units-of-measure.org/resource/om-2/hasUnit>/<http://www.ontology-of-units-of-measure.org/resource/om-2/hasOff-Set>"^^av:SparqlPropertyPath ; av:variableName "offset" ] ;
     .
 []  a av:AspectPattern ;
     av:ofAspect _:aspectUnit ;
@@ -48,7 +54,7 @@ _:aspectUnit a av:Aspect ;
         PREFIX qudt: <http://qudt.org/schema/qudt/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum ?sameAs
+        SELECT ?unit ?label ?symbol ?definition ?quantityKind ?ucum ?sameAs ?zeroAt ?oneEqualsOfBase
         WHERE {
             ?unit a/rdfs:subClassOf* qudt:Unit .
             OPTIONAL { ?unit qudt:description ?definition }
@@ -60,6 +66,8 @@ _:aspectUnit a av:Aspect ;
                 BIND(str(?ucumTmp) AS ?ucum)
             }
             OPTIONAL { ?unit qudt:omUnit ?sameAs }
+            OPTIONAL { ?unit qudt:conversionMultiplier ?oneEqualsOfBase }
+            OPTIONAL { ?unit qudt:conversionOffset ?zeroAt }
         }
     """^^av:SparqlQuery ;
     av:hasVariablePath
@@ -72,12 +80,14 @@ _:aspectUnit a av:Aspect ;
         PREFIX sweetUnit: <http://sweetontology.net/relaSci/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?unit ?label ?symbol ?ucum
+        SELECT ?unit ?label ?symbol ?ucum ?zeroAt ?oneEqualsOfBase
         WHERE {
             ?unit a/rdfs:subClassOf* sweetUnit:Unit .
             OPTIONAL { ?unit rdfs:label ?label }
             OPTIONAL { ?unit sweetUnit:hasSymbol ?symbol }
             OPTIONAL { ?unit skos:notation ?ucum }
+            OPTIONAL { ?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase }
+            OPTIONAL { ?unit <tmp:zeroAtOfBase> ?zeroAt }
         }
     """^^av:SparqlQuery ;
     .
@@ -85,36 +95,23 @@ _:aspectUnit a av:Aspect ;
     av:ofAspect _:aspectUnit ;
     av:associatedDataset <http://www.wikidata.org/> ;
     av:definingQuery """
+		PREFIX p: <http://www.wikidata.org/prop/>
+		PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX wikibase: <http://wikiba.se/ontology#>
         PREFIX wdt: <http://www.wikidata.org/prop/direct/>
         PREFIX wd: <http://www.wikidata.org/entity/>
-        SELECT ?unit ?label ?symbol ?quantityKind ?ucum
+        SELECT ?unit ?label ?symbol ?quantityKind ?ucum ?oneEqualsOfBase
         WHERE {
             ?unit wdt:P31/wdt:P279* wd:Q47574 . # units of measurement
-            FILTER(NOT EXISTS { ?unit wdt:P31/wdt:P279* wd:Q8142 }) # without currencies
-            FILTER(NOT EXISTS { ?unit wdt:P31/wdt:P279* wd:Q11639620 }) # without monetary subunits
-            OPTIONAL { {?unit rdfs:label ?label } UNION {?unit skos:altLabel ?label } }
-            OPTIONAL {?unit wdt:P5061 ?symbol .}
-            OPTIONAL {?unit wdt:P111 ?quantityKind .}
-            OPTIONAL {?unit wdt:P7825 ?ucum}
-        }
-    """^^av:SparqlQuery ;
-    .
-
-_:aspectConversion a av:Aspect ;
-    av:keyVariableName "conversion" ;
-    .
-[]  a av:AspectPattern ;
-    av:ofAspect _:aspectConversion ;
-    av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/>, <http://qudt.org/2.1/>, <http://sweetontology.net/>, <http://www.wikidata.org/> ;
-    av:definingQuery """
-        SELECT ?conversion ?unit ?referenceUnit ?zeroAt ?oneEquals
-        WHERE {
-            ?conversion <urn:conversion:unit> ?unit ;
-                        <urn:conversion:referenceUnit> ?referenceUnit .
-            OPTIONAL { ?conversion <urn:conversion:zeroAt> ?zeroAt .}
-            OPTIONAL { ?conversion <urn:conversion:oneEquals> ?oneEquals .}
+            #FILTER(NOT EXISTS { ?unit wdt:P31/wdt:P279* wd:Q8142 }) # without currencies
+            #FILTER(NOT EXISTS { ?unit wdt:P31/wdt:P279* wd:Q11639620 }) # without monetary subunits
+            {?unit rdfs:label ?label } UNION { ?unit skos:altLabel ?label }
+            OPTIONAL { ?unit wdt:P5061 ?symbol }
+            OPTIONAL { ?unit wdt:P111 ?quantityKind }
+            OPTIONAL { ?unit wdt:P7825 ?ucum }
+            OPTIONAL { ?unit p:P2442/psv:P2442/wikibase:quantityAmount ?oneEqualsOfBase }
         }
     """^^av:SparqlQuery ;
     .
@@ -192,18 +189,18 @@ _:aspectQuantityKind a av:Aspect ;
         PREFIX wdt: <http://www.wikidata.org/prop/direct/>
         SELECT ?quantityKind ?label ?symbol ?amountOfSubstanceDimensionExponent ?electricCurrentDimensionExponent ?lengthDimensionExponent ?luminousIntensityDimensionExponent ?massDimensionExponent ?temperatureDimensionExponent ?timeDimensionExponent
         WHERE {
-            OPTIONAL { { ?quantity rdfs:label ?label } UNION { ?quantity skos:altLabel ?label } }
-            OPTIONAL { ?quantity wdt:P7973 ?symbol }
-            OPTIONAL {
-                ?quantityKind wdt:P4020 ?dimensionLabel .
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {N}}^{"),"}")),0) AS ?amountOfSubstanceDimensionExponent)
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {I}}^{"),"}")),0) AS ?electricCurrentDimensionExponent)
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {L}}^{"),"}")),0) AS ?lengthDimensionExponent)
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {J}}^{"),"}")),0) AS ?luminousIntensityDimensionExponent)
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {M}}^{"),"}")),0) AS ?massDimensionExponent)
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {Θ}}^{"),"}")),0) AS ?temperatureDimensionExponent)
-                BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STR(?dimensionLabel),"\\\\mathsf {T}}^{"),"}")),0) AS ?timeDimensionExponent)
-            }
+            { ?quantityKind rdfs:label ?label } UNION { ?quantityKind skos:altLabel ?label }
+            OPTIONAL { ?quantityKind wdt:P7973 ?symbol }
+            ?quantityKind wdt:P4020 ?dimensionLabel .
+            BIND(STRBEFORE(STRAFTER(STR(?dimensionLabel),"<annotation encoding=\\"application/x-tex\\">{\\\\displaystyle {"),"}</annotation>") AS ?dimensionLabelTex)
+            BIND(REPLACE(?dimensionLabelTex,"\\\\\\\\mathsf \\\\{\\\\s*(\\\\S+)\\\\s*}}\\\\s*(\\\\{|$)","\\\\\\\\mathsf {$1}}^{1}$2") AS ?dimensionLabelTexWithOnes)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {N}}^{"),"}")),0) AS ?amountOfSubstanceDimensionExponent)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {I}}^{"),"}")),0) AS ?electricCurrentDimensionExponent)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {L}}^{"),"}")),0) AS ?lengthDimensionExponent)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {J}}^{"),"}")),0) AS ?luminousIntensityDimensionExponent)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {M}}^{"),"}")),0) AS ?massDimensionExponent)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {\\\\Theta}}^{"),"}")),0) AS ?temperatureDimensionExponent)
+            BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {T}}^{"),"}")),0) AS ?timeDimensionExponent)
         }
     """^^av:SparqlQuery ;
     av:hasVariablePath
@@ -297,7 +294,7 @@ _:sweet3SourceUnits a av:Step ;
     .
 
 _:wikidataSource a av:Step ;
-    rdfs:label "Load Wikidata Units"@en;
+    rdfs:label "Load Wikidata"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:SparqlSourceProcessor ;
     av:associatedDataset <http://www.wikidata.org/> ;
@@ -457,357 +454,56 @@ _:sweet3additionalLabels a av:Step ;
     .
 
 _:om2conversions a av:Step ;
-    rdfs:label "Transform OM2 Conversions"@en;
+    rdfs:label "OM2 Conversions Closure"@en;
     p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
+    av:processorClass abecto:FBRuleReasoningProcessor ;
     p-plan:isPrecededBy _:om2additionalLabels ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
     av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>
-                CONSTRUCT {
-                    ?conversion <urn:conversion:unit> ?unit ;
-                                <urn:conversion:oneEquals> ?oneEquals ;
-                                <urn:conversion:zeroAt> ?zeroAt ;
-                                <urn:conversion:referenceUnit> ?referenceUnit .
-                } WHERE {
-                    {
-                        # direct conversion
-                        ?unit om:hasUnit ?referenceUnit ;
-                            om:hasFactor ?oneEquals .
-                        BIND( IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        # reverse direct conversion
-                        ?referenceUnit om:hasUnit ?unit ;
-                                    om:hasFactor ?inverseOneEquals .
-                        BIND(1/?inverseOneEquals AS ?oneEquals)
-                        BIND(IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        # conversion by prefix
-                        ?unit om:hasUnit ?referenceUnit ;
-                            om:hasPrefix/om:hasFactor ?oneEquals .
-                        BIND(0 AS ?zeroAt)
-                        BIND(IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        # reverse conversion by prefix
-                        ?referenceUnit om:hasUnit ?unit ;
-                                    om:hasPrefix/om:hasFactor ?inverseOneEquals .
-                        BIND(1/?inverseOneEquals AS ?oneEquals)
-                        BIND(0 AS ?zeroAt )
-                        BIND(IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        # conversion by scale
-                        [] om:hasUnit ?unit ;
-                        om:hasScale/om:hasUnit ?referenceUnit ;
-                        om:hasFactor ?inverseOneEquals ;
-                        om:hasOff-Set ?inverseZeroAt ;
-                        BIND(-1*?inverseZeroAt/?oneEquals AS ?zeroAt)
-                        BIND(1/?inverseOneEquals AS ?oneEquals)
-                        BIND(IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        # reverse conversion by scale
-                        [] om:hasUnit ?referenceUnit ;
-                        om:hasScale/om:hasUnit ?unit ;
-                        om:hasFactor ?oneEquals ;
-                        om:hasOff-Set ?zeroAt ;
-                        BIND(IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    }
-                }
-            """^^av:SparqlQuery ] ;
-    .
-
-_:qudt2conversions a av:Step ;
-    rdfs:label "Transform QUDT2 Conversions"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:qudt2additionalLabels ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX qudt: <http://qudt.org/schema/qudt/>
-                CONSTRUCT {
-                    ?conversion <urn:conversion:unit> ?unit ;
-                                <urn:conversion:oneEquals> ?oneEquals ;
-                                <urn:conversion:zeroAt> ?zeroAt ;
-                                <urn:conversion:referenceUnit> ?referenceUnit .
-                } WHERE {
-                    ?unit qudt:hasQuantityKind/^qudt:hasQuantityKind ?referenceUnit .
-                    BIND( IRI(CONCAT("urn:qudt:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                    ?unit qudt:conversionMultiplier ?factor1 .
-                    ?unit qudt:conversionOffset ?offset1 .
-                    ?referenceUnit qudt:conversionMultiplier ?factor2 .
-                    ?referenceUnit qudt:conversionOffset ?offset2 .
-                    BIND(?factor1/?factor2 AS ?oneEquals)
-                    BIND((?offset1-?offset2)*?factor2 AS ?zeroAt)
-                    FILTER (STR(?unit) < STR(?referenceUnit))
-                }
-            """^^av:SparqlQuery ] ;
+        [av:key "rules" ; av:value """
+            @prefix om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>.
+            [baseUnits: (om:InternationalSystemOfUnits om:hasBaseUnit ?unit) -> (?unit <tmp:oneEqualsOfBase> 1.0) ]
+            [fractionUnits: (?unit3 om:hasNumerator ?numerator), (?unit3 om:hasDenominator ?denominator), (?numerator <tmp:oneEqualsOfBase> ?oneEqualsNumerator), (?denominator <tmp:oneEqualsOfBase> ?oneEqualsDenominator), quotient(?oneEqualsNumerator, ?oneEqualsDenominator, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [prefixUnits: (?unit om:hasUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference) (?unit om:hasPrefix ?prefix), (?prefix om:hasFactor ?prefixFactor), product(?oneEqualsOfReference, ?prefixFactor, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [squareUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent 2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [cubicUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent 3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [reciprocalUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent -1), quotient(1, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [reciprocalSquareUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent -2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), quotient(1, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [reciprocalcubicUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent -3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?cubic), quotient(1, ?cubic, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+        """ ] ;
     .
 
 _:sweet3conversions a av:Step ;
-    rdfs:label "Transform SWEET3 Conversions"@en;
+    rdfs:label "SWEET3 Conversions Closure"@en;
     p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
+    av:processorClass abecto:FBRuleReasoningProcessor ;
     p-plan:isPrecededBy _:sweet3additionalLabels ;
     av:associatedDataset <http://sweetontology.net/> ;
     av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX sorelm: <http://sweetontology.net/relaMath/>
-                PREFIX sorelsc: <http://sweetontology.net/relaSci/>
-                CONSTRUCT {
-                    ?conversion <urn:conversion:unit> ?unit ;
-                                <urn:conversion:oneEquals> ?oneEquals ;
-                                <urn:conversion:zeroAt> ?zeroAt ;
-                                <urn:conversion:referenceUnit> ?referenceUnit .
-                } WHERE {
-                    {
-                        ?unit sorelsc:hasBaseUnit ?referenceUnit .
-                        OPTIONAL { ?unit sorelm:hasScalingNumber ?oneEquals }
-                        OPTIONAL { ?unit sorelm:hasShiftingNumber ?zeroAt }
-                        FILTER (BOUND(?oneEquals) || BOUND(?zeroAt) )
-                        BIND( IRI(CONCAT("urn:sweet3:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        ?referenceUnit sorelsc:hasBaseUnit ?unit .
-                        OPTIONAL { ?referenceUnit sorelm:hasScalingNumber ?inverseOneEquals }
-                        OPTIONAL { ?referenceUnit sorelm:hasShiftingNumber ?inverseZeroAt }
-                        FILTER (BOUND(?inverseOneEquals) || BOUND(?inverseZeroAt) )
-                        BIND(COALESCE(1/?inverseOneEquals, 1) AS ?oneEquals)
-                        BIND(COALESCE(-1*?inverseZeroAt/?inverseOneEquals, -1*?inverseZeroAt ) AS ?zeroAt)
-                        BIND( IRI(CONCAT("urn:sweet3:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    }
-                }
-            """^^av:SparqlQuery ] ;
-    .
-
-_:wikidataConversions a av:Step ;
-    rdfs:label "Transform Wikidata Conversions"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:wikidataSource ;
-    av:associatedDataset <http://www.wikidata.org/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX p: <http://www.wikidata.org/prop/>
-                PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
-                PREFIX wikibase: <http://wikiba.se/ontology#>
-                CONSTRUCT {
-                    ?conversion <urn:conversion:unit> ?unit ;
-                                <urn:conversion:oneEquals> ?oneEquals ;
-                                <urn:conversion:zeroAt> ?zeroAt ;
-                                <urn:conversion:referenceUnit> ?referenceUnit .
-                } WHERE {
-                    {
-                        # direct conversion
-                        ?unit p:P2442/psv:P2442
-                            [wikibase:quantityAmount ?oneEquals ;
-                                wikibase:quantityUnit ?referenceUnit ] .
-                        BIND( IRI(CONCAT("urn:wd:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    } UNION {
-                        # reverse direct conversion
-                        ?referenceUnit p:P2442/psv:P2442
-                            [wikibase:quantityAmount ?inverseOneEquals ;
-                                wikibase:quantityUnit ?unit ] .
-                        BIND(1/?inverseOneEquals AS ?oneEquals)
-                        BIND(IRI(CONCAT("urn:wd:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                        FILTER (STR(?unit) < STR(?referenceUnit))
-                    }
-                }
-            """^^av:SparqlQuery ] ;
-    .
-
-_:om2conversionsTransitive a av:Step ;
-    rdfs:label "Transitive OM2 Conversions"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:om2conversions ;
-    av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX : <urn:conversion:>
-                CONSTRUCT {
-                    ?conversion :unit ?unit ;
-                                :oneEquals ?oneEquals ;
-                                :zeroAt ?zeroAt ;
-                                :referenceUnit ?referenceUnit .
-                } WHERE {
-                    {
-                        [] :unit ?unit ;
-                        :oneEquals ?oneEquals1 ;
-                        :zeroAt ?zeroAt1 ;
-                        :referenceUnit ?betweenUnit .
-                        [] :unit ?betweenUnit ;
-                        :oneEquals ?oneEquals2 ;
-                        :zeroAt ?zeroAt2 ;
-                        :referenceUnit ?referenceUnit .
-                        FILTER NOT EXISTS { [] :unit ?unit ;
-                                            :referenceUnit ?referenceUnit . }
-                        BIND(?oneEquals1*?oneEquals2 AS ?oneEquals)
-                        BIND(?zeroAt1/?oneEquals2+?zeroAt2 AS ?zeroAt)
-                    } UNION {
-                        [] :unit ?unit ;
-                        :oneEquals ?oneEquals1 ;
-                        :zeroAt ?zeroAt1 ;
-                        :referenceUnit ?betweenUnit .
-                        [] :unit ?referenceUnit ;
-                        :oneEquals ?oneEquals2 ;
-                        :zeroAt ?zeroAt2 ;
-                        :referenceUnit ?betweenUnit .
-                        FILTER NOT EXISTS { [] :unit ?unit ;
-                                            :referenceUnit ?referenceUnit . }
-                        BIND(?oneEquals1/?oneEquals2 AS ?oneEquals)
-                        BIND(?zeroAt1*?oneEquals2-?zeroAt2 AS ?zeroAt)
-                    } UNION {
-                        [] :unit ?betweenUnit ;
-                        :oneEquals ?oneEquals1 ;
-                        :zeroAt ?zeroAt1 ;
-                        :referenceUnit ?unit .
-                        [] :unit ?betweenUnit ;
-                        :oneEquals ?oneEquals2 ;
-                        :zeroAt ?zeroAt2 ;
-                        :referenceUnit ?referenceUnit .
-                        FILTER NOT EXISTS { [] :unit ?unit ;
-                                            :referenceUnit ?referenceUnit . }
-                        BIND(?oneEquals2/?oneEquals1 AS ?oneEquals)
-                        BIND(?zeroAt2-?zeroAt1/?oneEquals2 AS ?zeroAt)
-                    }
-                    BIND( IRI(CONCAT("urn:om:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                    FILTER (STR(?unit) < STR(?referenceUnit))
-                }
-            """^^av:SparqlQuery ] ,
-        [av:key "maxIterations" ; av:value 3 ] ;
-    .
-
-_:sweet3conversionsTransitive a av:Step ;
-    rdfs:label "Transitive SWEET3 Conversions"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:sweet3conversions ;
-    av:associatedDataset <http://sweetontology.net/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX : <urn:conversion:>
-                CONSTRUCT {
-                    ?conversion :unit ?unit ;
-                                :oneEquals ?oneEquals ;
-                                :zeroAt ?zeroAt ;
-                                :referenceUnit ?referenceUnit .
-                } WHERE {
-                    {
-                        [] :unit ?unit ;
-                        :oneEquals ?oneEquals1 ;
-                        :zeroAt ?zeroAt1 ;
-                        :referenceUnit ?betweenUnit .
-                        [] :unit ?betweenUnit ;
-                        :oneEquals ?oneEquals2 ;
-                        :zeroAt ?zeroAt2 ;
-                        :referenceUnit ?referenceUnit .
-                        FILTER NOT EXISTS { [] :unit ?unit ;
-                                            :referenceUnit ?referenceUnit . }
-                        BIND(?oneEquals1/?oneEquals2 AS ?oneEquals)
-                        BIND(?zeroAt1/?oneEquals2+?zeroAt2 AS ?zeroAt)
-                    } UNION {
-                        [] :unit ?betweenUnit ;
-                        :oneEquals ?oneEquals1 ;
-                        :zeroAt ?zeroAt1 ;
-                        :referenceUnit ?unit .
-                        [] :unit ?betweenUnit ;
-                        :oneEquals ?oneEquals2 ;
-                        :zeroAt ?zeroAt2 ;
-                        :referenceUnit ?referenceUnit .
-                        FILTER NOT EXISTS { [] :unit ?unit ;
-                                            :referenceUnit ?referenceUnit . }
-                        BIND(1/?oneEquals1/?oneEquals2 AS ?oneEquals)
-                        BIND(-1*?zeroAt1/?oneEquals2+?zeroAt2 AS ?zeroAt)
-                    } UNION {
-                        [] :unit ?unit ;
-                        :oneEquals ?oneEquals1 ;
-                        :zeroAt ?zeroAt1 ;
-                        :referenceUnit ?betweenUnit .
-                        [] :unit ?referenceUnit ;
-                        :oneEquals ?oneEquals2 ;
-                        :zeroAt ?zeroAt2 ;
-                        :referenceUnit ?betweenUnit .
-                        FILTER NOT EXISTS { [] :unit ?unit ;
-                                            :referenceUnit ?referenceUnit . }
-                        BIND(?oneEquals1*?oneEquals2 AS ?oneEquals)
-                        BIND(?zeroAt1*?oneEquals2-?zeroAt2 AS ?zeroAt)
-                    }
-                    BIND( IRI(CONCAT("urn:sweet3:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                    FILTER (STR(?unit) < STR(?referenceUnit))
-                }
-            """^^av:SparqlQuery ] ,
-        [av:key "maxIterations" ; av:value 3 ] ;
-    .
-
-_:wdConversionsTransitive a av:Step ;
-    rdfs:label "Transitive Wikidata Conversions"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:wikidataConversions ;
-    av:associatedDataset <http://www.wikidata.org/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-            PREFIX : <urn:conversion:>
-            CONSTRUCT {
-                ?conversion :unit ?unit ;
-                            :oneEquals ?oneEquals ;
-                            :zeroAt ?zeroAt ;
-                            :referenceUnit ?referenceUnit .
-            } WHERE {
-                {
-                    [] :unit ?unit ;
-                    :oneEquals ?oneEquals1 ;
-                    :zeroAt ?zeroAt1 ;
-                    :referenceUnit ?betweenUnit .
-                    [] :unit ?betweenUnit ;
-                    :oneEquals ?oneEquals2 ;
-                    :zeroAt ?zeroAt2 ;
-                    :referenceUnit ?referenceUnit .
-                    FILTER NOT EXISTS { [] :unit ?unit ;
-                                        :referenceUnit ?referenceUnit . }
-                    BIND(?oneEquals1*?oneEquals2 AS ?oneEquals)
-                    BIND(?zeroAt1/?oneEquals2+?zeroAt2 AS ?zeroAt)
-                } UNION {
-                    [] :unit ?unit ;
-                    :oneEquals ?oneEquals1 ;
-                    :zeroAt ?zeroAt1 ;
-                    :referenceUnit ?betweenUnit .
-                    [] :unit ?referenceUnit ;
-                    :oneEquals ?oneEquals2 ;
-                    :zeroAt ?zeroAt2 ;
-                    :referenceUnit ?betweenUnit .
-                    FILTER NOT EXISTS { [] :unit ?unit ;
-                                        :referenceUnit ?referenceUnit . }
-                    BIND(?oneEquals1/?oneEquals2 AS ?oneEquals)
-                    BIND(?zeroAt1*?oneEquals2-?zeroAt2 AS ?zeroAt)
-                } UNION {
-                    [] :unit ?betweenUnit ;
-                    :oneEquals ?oneEquals1 ;
-                    :zeroAt ?zeroAt1 ;
-                    :referenceUnit ?unit .
-                    [] :unit ?betweenUnit ;
-                    :oneEquals ?oneEquals2 ;
-                    :zeroAt ?zeroAt2 ;
-                    :referenceUnit ?referenceUnit .
-                    FILTER NOT EXISTS { [] :unit ?unit ;
-                                        :referenceUnit ?referenceUnit . }
-                    BIND(?oneEquals2/?oneEquals1 AS ?oneEquals)
-                    BIND(?zeroAt2-?zeroAt1/?oneEquals2 AS ?zeroAt)
-                }
-                BIND( IRI(CONCAT("urn:wd:conversion:", REPLACE(STR(?unit),".*/",""), ":", REPLACE(STR(?referenceUnit),".*/","") )) AS ?conversion)
-                FILTER (STR(?unit) < STR(?referenceUnit))
-            }
-        """^^av:SparqlQuery ] ,
-        [av:key "maxIterations" ; av:value 3 ] ;
+        [av:key "rules" ; av:value """
+            @prefix sorelm: <http://sweetontology.net/relaMath/> .
+            @prefix sorelsc: <http://sweetontology.net/relaSci/> .
+            @prefix sorepsu: <http://sweetontology.net/reprSciUnits/> .
+            [baseUnits: (?unit a sorepsu:BaseUnit) -> (?unit <tmp:oneEqualsOfBase> "1.0"^^xsd:double), (?unit <tmp:zeroAtOfBase> "0.0"^^xsd:double) ]
+            [scaledUnits: (?unit a sorepsu:UnitDerivedByScaling), (?unit sorelm:hasScalingNumber ?scalingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtOfBase), product(?scalingNumber, ?oneEqualsReference, ?oneEqualsOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
+            [shiftedUnits: (?unit a sorepsu:UnitDerivedByShifting), (?unit sorelm:hasScalingNumber ?scalingNumber), (?unit sorelm:hasShiftingNumber ?shiftingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference), product(?scalingNumber, ?oneEqualsReference, ?oneEqualsOfBase), difference(?shiftingNumber, ?oneEqualsReference, ?scaledShiftingNumber), sum(?zeroAtReference, ?scaledShiftingNumber, ?zeroAtOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
+            [shiftedUnitsWithoutScalingNumber: (?unit a sorepsu:UnitDerivedByShifting), noValue(?unit, sorelm:hasScalingNumber), (?unit sorelm:hasShiftingNumber ?shiftingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference), difference(?shiftingNumber, ?oneEqualsReference, ?scaledShiftingNumber), sum(?zeroAtReference, ?scaledShiftingNumber, ?zeroAtOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
+            [squareUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower 2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [cubicUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower 3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [reciprocalUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower -1), quotient(1, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [reciprocalSquareUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower -2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), quotient(1, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [reciprocalcubicUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower -3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?cubic), quotient(1, ?cubic, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [productOf2Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), noValue(?unit sorelm:hasOperand ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit3), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
+            ]
+            [productOf3Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), noValue(?unit sorelm:hasOperand ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit4), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
+            ]
+            [productOf4Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), (?unit sorelm:hasOperand ?referenceUnit4), noValue(?unit sorelm:hasOperand ?referenceUnit5), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit5), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit5), notEqual(?referenceUnit3, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit5), notEqual(?referenceUnit4, ?referenceUnit5), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEqualsTmp2) product(?oneEqualsTmp2, ?oneEqualsOfReference4, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
+            ]
+            [productOf5Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), (?unit sorelm:hasOperand ?referenceUnit4), (?unit sorelm:hasOperand ?referenceUnit5), noValue(?unit sorelm:hasOperand ?referenceUnit6), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit5), notEqual(?referenceUnit1, ?referenceUnit6), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit5), notEqual(?referenceUnit2, ?referenceUnit6), notEqual(?referenceUnit3, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit5), notEqual(?referenceUnit3, ?referenceUnit6), notEqual(?referenceUnit4, ?referenceUnit5), notEqual(?referenceUnit4, ?referenceUnit6), notEqual(?referenceUnit5, ?referenceUnit6), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEqualsTmp2) product(?oneEqualsTmp2, ?oneEqualsOfReference4, ?oneEqualsTmp3) product(?oneEqualsTmp3, ?oneEqualsOfReference5, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
+            ]
+            [productOf6Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), (?unit sorelm:hasOperand ?referenceUnit4), (?unit sorelm:hasOperand ?referenceUnit5), (?unit sorelm:hasOperand ?referenceUnit6), noValue(?unit sorelm:hasOperand ?referenceUnit7),
+                notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit5), notEqual(?referenceUnit1, ?referenceUnit6), notEqual(?referenceUnit1, ?referenceUnit7), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit5), notEqual(?referenceUnit2, ?referenceUnit6), notEqual(?referenceUnit2, ?referenceUnit7), notEqual(?referenceUnit3, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit5), notEqual(?referenceUnit3, ?referenceUnit6), notEqual(?referenceUnit3, ?referenceUnit7), notEqual(?referenceUnit4, ?referenceUnit5), notEqual(?referenceUnit4, ?referenceUnit6), notEqual(?referenceUnit4, ?referenceUnit7), notEqual(?referenceUnit5, ?referenceUnit6), notEqual(?referenceUnit5, ?referenceUnit7), notEqual(?referenceUnit6, ?referenceUnit7), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEqualsTmp2) product(?oneEqualsTmp2, ?oneEqualsOfReference4, ?oneEqualsTmp3) product(?oneEqualsTmp3, ?oneEqualsOfReference5, ?oneEqualsTmp4) product(?oneEqualsTmp4, ?oneEqualsOfReference6, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+        """ ] ;
     .
 
 GRAPH _:manualCorrespondences
@@ -902,7 +598,7 @@ _:presentCorrespondences a av:Step ;
     rdfs:label "Present Correspondences"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UsePresentMappingProcessor ;
-    p-plan:isPrecededBy _:om2conversionsTransitive, _:qudt2conversions, _:sweet3conversionsTransitive, _:wdConversionsTransitive ;
+    p-plan:isPrecededBy _:om2conversions, _:qudt2additionalLabels, _:sweet3conversions, _:wikidataSource ;
     av:predefinedMetaDataGraph _:manualCorrespondences ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
@@ -941,13 +637,13 @@ _:completeness a av:Step;
     .
 
 _:unitComparison a av:Step ;
-    rdfs:label "Symbol Comparison"@en;
+    rdfs:label "Unit Comparison"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
     p-plan:isPrecededBy _:unitLabelMapping ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
-        [av:key "variables" ; av:value "symbol" ] ;
+        [av:key "variables" ; av:value "symbol", "oneEquals", "zeroAt" ] ;
     .
 
 _:quantityKindComparison a av:Step ;
@@ -957,26 +653,5 @@ _:quantityKindComparison a av:Step ;
     p-plan:isPrecededBy _:unitLabelMapping ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
-        [av:key "variables" ; av:value "label", "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
-    .
-
-_:conversionMapping a av:Step ;
-    rdfs:label "Conversion Mapping"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:EquivalentValueMappingProcessor ;
-    p-plan:isPrecededBy _:unitLabelMapping ;
-    av:predefinedMetaDataGraph _:manualCorrespondences ;
-    av:hasParameter
-        [av:key "aspect" ; av:value _:aspectConversion ] ,
-        [av:key "variables" ; av:value "unit", "referenceUnit" ] ;
-    .
-
-_:conversionComparison a av:Step ;
-    rdfs:label "Conversion Comparison"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:LiteralValueComparisonProcessor ;
-    p-plan:isPrecededBy _:conversionMapping ;
-    av:hasParameter
-        [av:key "aspect" ; av:value _:aspectConversion ] ,
-        [av:key "variables" ; av:value "oneEquals", "zeroAt" ] ;
+        [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
     .
