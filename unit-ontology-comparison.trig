@@ -221,7 +221,7 @@ _:om2Source a av:Step ;
     av:hasParameter [av:key "url" ; av:value <https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2.0.rdf> ] ;
     .
 _:om2SourceUcum a av:Step ;
-    rdfs:label "Load OM2"@en;
+    rdfs:label "Load OM2 UCUM"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
