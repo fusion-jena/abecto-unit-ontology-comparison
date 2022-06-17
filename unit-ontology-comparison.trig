@@ -49,7 +49,7 @@ _:aspectUnit a av:Aspect ;
     .
 []  a av:AspectPattern ;
     av:ofAspect _:aspectUnit ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
+    av:associatedDataset <http://qudt.org/> ;
     av:definingQuery """
         PREFIX qudt: <http://qudt.org/schema/qudt/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -157,7 +157,7 @@ _:aspectQuantityKind a av:Aspect ;
     .
 []  a av:AspectPattern ;
     av:ofAspect _:aspectQuantityKind ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
+    av:associatedDataset <http://qudt.org/> ;
     av:definingQuery """
         PREFIX qudt: <http://qudt.org/schema/qudt/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -232,57 +232,64 @@ _:qudt2Sourcequdt a av:Step ;
     rdfs:label "Load QUDT2 Schema"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/schema/qudt> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/schema/qudt> ] ;
     .
 _:qudt2Sourcedatatype a av:Step ;
     rdfs:label "Load QUDT2 Datatypes"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/schema/datatype> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/schema/datatype> ] ;
     .
 _:qudt2Sourceconstant a av:Step ;
     rdfs:label "Load QUDT2 Constants"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/vocab/constant> ] ;
-    .
-_:qudt2Sourcediscipline a av:Step ;
-    rdfs:label "Load QUDT2 Disciplines"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/vocab/discipline> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/constant> ] ;
     .
 _:qudt2Sourcedimensionvector a av:Step ;
     rdfs:label "Load QUDT2 Dimension Vectors"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/vocab/dimensionvector> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/dimensionvector> ] ;
     .
 _:qudt2Sourcequantitykind a av:Step ;
     rdfs:label "Load QUDT2 Quantity Kinds"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/vocab/quantitykind> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/quantitykind> ] ;
     .
 _:qudt2Sourcesuo a av:Step ;
     rdfs:label "Load QUDT2 Systems of Units"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/vocab/sou> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/sou> ] ;
     .
 _:qudt2Sourceunit a av:Step ;
     rdfs:label "Load QUDT2 Units"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/2.1/vocab/unit> ] ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/unit> ] ;
+    .
+_:qudt2Sourceprefix a av:Step ;
+    rdfs:label "Load QUDT2 Units"@en;
+    p-plan:isStepOfPlan _:plan ;
+    av:processorClass abecto:UrlSourceProcessor ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/prefix> ] ;
+    .
+_:qudt2Sourcesoqk a av:Step ;
+    rdfs:label "Load QUDT2 Units"@en;
+    p-plan:isStepOfPlan _:plan ;
+    av:processorClass abecto:UrlSourceProcessor ;
+    av:associatedDataset <http://qudt.org/> ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/soqk> ] ;
     .
 
 _:sweet3SourceUnits a av:Step ;
@@ -384,8 +391,8 @@ _:qudt2additionalLabels a av:Step ;
     rdfs:label "Additional Labels for QUDT2"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:qudt2Sourcequdt, _:qudt2Sourcedatatype, _:qudt2Sourceconstant, _:qudt2Sourcediscipline, _:qudt2Sourcedimensionvector, _:qudt2Sourcequantitykind, _:qudt2Sourcesuo, _:qudt2Sourceunit ;
-    av:associatedDataset <http://qudt.org/2.1/> ;
+    p-plan:isPrecededBy _:qudt2Sourcequdt, _:qudt2Sourcedatatype, _:qudt2Sourceconstant, _:qudt2Sourceprefix, _:qudt2Sourcesoqk, _:qudt2Sourcedimensionvector, _:qudt2Sourcequantitykind, _:qudt2Sourcesuo, _:qudt2Sourceunit ;
+    av:associatedDataset <http://qudt.org/> ;
     av:hasParameter
         [av:key "query" ; av:value """
                 PREFIX qudt: <http://qudt.org/schema/qudt/>
