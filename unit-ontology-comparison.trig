@@ -14,6 +14,7 @@ _:plan a av:Plan ;
     .
 
 _:aspectUnit a av:Aspect ;
+    rdfs:label "Unit of Measurement"@en;
     av:keyVariableName "unit" ;
     .
 []  a av:AspectPattern ;
@@ -117,6 +118,7 @@ _:aspectUnit a av:Aspect ;
     .
 
 _:aspectQuantityKind a av:Aspect ;
+    rdfs:label "Quantity Kind"@en;
     av:keyVariableName "quantityKind" ;
     .
 []  a av:AspectPattern ;
@@ -263,7 +265,7 @@ _:qudt2Sourcequantitykind a av:Step ;
     av:associatedDataset <http://qudt.org/> ;
     av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/quantitykind> ] ;
     .
-_:qudt2Sourcesuo a av:Step ;
+_:qudt2Sourcesou a av:Step ;
     rdfs:label "Load QUDT2 Systems of Units"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
@@ -278,14 +280,14 @@ _:qudt2Sourceunit a av:Step ;
     av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/unit> ] ;
     .
 _:qudt2Sourceprefix a av:Step ;
-    rdfs:label "Load QUDT2 Units"@en;
+    rdfs:label "Load QUDT2 Prefix"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://qudt.org/> ;
     av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/prefix> ] ;
     .
 _:qudt2Sourcesoqk a av:Step ;
-    rdfs:label "Load QUDT2 Units"@en;
+    rdfs:label "Load QUDT2 Systems of Quantity Kinds"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://qudt.org/> ;
@@ -351,126 +353,17 @@ _:wikidataSource a av:Step ;
             <http://schema.org/about> ]
     .
 
-_:om2additionalLabels a av:Step ;
-    rdfs:label "Additional Labels for OM2"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:om2Source, _:om2SourceUcum ;
-    av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>
-                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                CONSTRUCT {
-                    ?unit rdfs:label ?labelVariation .
-                } WHERE {
-                    ?unit a/rdfs:subClassOf* om:Unit ;
-                        rdfs:label|om:alternativeLabel ?label .
-                    VALUES (?pattern ?replacement ?flags) {
-                        ("British thermal unit"      "BTU"             "i") # replace with acronym
-                        ("metre( |$)"                "meter$1"         "i") # unify British and American writing
-                        ("litre( |$)"                "liter$1"         "i") # unify British and American writing
-                        ("(^| )square ([^ ]*)( |$)"  "$1$2 squared$3"  "i") # unify syntax for squared units
-                        ("(^| )cubic ([^ ]*)( |$)"   "$1$2 cubed$3"    "i") # unify syntax for cubic units
-                        ("(^| )([^ ]*)metres( |$)"   "$1$2meter$3"     "i") # unify plural writing
-                        ("(^| )deka"                 "$1deca"          "i") # unify use of prefix
-                        ("(^| )piko"                 "$1pico"          "i") # unify use of prefix
-                        ("(^| )mikro"                "$1micro"         "i") # unify use of prefix
-                        ("(^| )nautical"             "$1nautic"        "i") # unify nautic and nautical
-                        ("(^| )reciprocal( |$)"      "$1per$2"         "i") # unify per and reciprocal
-                }
-                BIND(REPLACE(?label, ?pattern, ?replacement,  ?flags) AS ?labelVariation )
-                FILTER NOT EXISTS {?unit rdfs:label|om:alternativeLabel ?labelVariation }
-                }
-            """^^av:SparqlQuery ] ,
-        [av:key "maxIterations" ; av:value 10 ] ;
-    .
-
-_:qudt2additionalLabels a av:Step ;
-    rdfs:label "Additional Labels for QUDT2"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:qudt2Sourcequdt, _:qudt2Sourcedatatype, _:qudt2Sourceconstant, _:qudt2Sourceprefix, _:qudt2Sourcesoqk, _:qudt2Sourcedimensionvector, _:qudt2Sourcequantitykind, _:qudt2Sourcesuo, _:qudt2Sourceunit ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX qudt: <http://qudt.org/schema/qudt/>
-                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                CONSTRUCT {
-                    ?unit rdfs:label ?labelVariation .
-                } WHERE {
-                    ?unit a/rdfs:subClassOf* qudt:Unit ;
-                        rdfs:label|skos:prefLabel|skos:altLabel ?label .
-                    VALUES (?pattern ?replacement ?flags) {
-                        ("British thermal unit"      "BTU"             "i") # replace with acronym
-                        ("metre( |$)"                "meter$1"         "i") # unify British and American writing
-                        ("litre( |$)"                "liter$1"         "i") # unify British and American writing
-                        ("(^| )square ([^ ]*)( |$)"  "$1$2 squared$3"  "i") # unify syntax for squared units
-                        ("(^| )cubic ([^ ]*)( |$)"   "$1$2 cubed$3"    "i") # unify syntax for cubic units
-                        ("(^| )([^ ]*)metres( |$)"   "$1$2meter$3"     "i") # unify plural writing
-                        ("(^| )deka"                 "$1deca"          "i") # unify use of prefix
-                        ("(^| )piko"                 "$1pico"          "i") # unify use of prefix
-                        ("(^| )mikro"                "$1micro"         "i") # unify use of prefix
-                        ("(^| )nautical"             "$1nautic"        "i") # unify nautic and nautical
-                        ("(^| )reciprocal( |$)"      "$1per$2"         "i") # unify per and reciprocal
-                }
-                BIND(REPLACE(?label, ?pattern, ?replacement,  ?flags) AS ?labelVariation )
-                FILTER NOT EXISTS {?unit rdfs:label|skos:prefLabel|skos:altLabel ?labelVariation }
-                }
-            """^^av:SparqlQuery ] ,
-        [av:key "maxIterations" ; av:value 10 ] ;
-    .
-
-_:sweet3additionalLabels a av:Step ;
-    rdfs:label "Additional Labels for SWEET3"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:sweet3SourceUnits ;
-    av:associatedDataset <http://sweetontology.net/> ;
-    av:hasParameter
-        [av:key "query" ; av:value """
-                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                PREFIX sweetUnit: <http://sweetontology.net/relaSci/>
-                CONSTRUCT {
-                    ?unit rdfs:label ?labelVariation .
-                } WHERE {
-                    ?unit a/rdfs:subClassOf* sweetUnit:Unit ;
-                        rdfs:label ?label .
-                    VALUES (?pattern ?replacement ?flags) {
-                        ("British thermal unit"      "BTU"             "i") # replace with acronym
-                        ("metre( |$)"                "meter$1"         "i") # unify British and American writing
-                        ("litre( |$)"                "liter$1"         "i") # unify British and American writing
-                        ("(^| )square ([^ ]*)( |$)"  "$1$2 squared$3"  "i") # unify syntax for squared units
-                        ("(^| )cubic ([^ ]*)( |$)"   "$1$2 cubed$3"    "i") # unify syntax for cubic units
-                        ("(^| )([^ ]*)metres( |$)"   "$1$2meter$3"     "i") # unify plural writing
-                        ("(^| )deka"                 "$1deca"          "i") # unify use of prefix
-                        ("(^| )piko"                 "$1pico"          "i") # unify use of prefix
-                        ("(^| )mikro"                "$1micro"         "i") # unify use of prefix
-                        ("(^| )nautical"             "$1nautic"        "i") # unify nautic and nautical
-                        ("(^| )reciprocal( |$)"      "$1per$2"         "i") # unify per and reciprocal
-                }
-                BIND(REPLACE(?label, ?pattern, ?replacement,  ?flags) AS ?labelVariation )
-                FILTER NOT EXISTS {?unit rdfs:label ?labelVariation }
-                }
-            """^^av:SparqlQuery ] ,
-        [av:key "maxIterations" ; av:value 10 ] ;
-    .
-
 _:om2conversions a av:Step ;
     rdfs:label "OM2 Conversions Closure"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:FBRuleReasoningProcessor ;
-    p-plan:isPrecededBy _:om2additionalLabels ;
+    p-plan:isPrecededBy _:om2Source, _:om2SourceUcum ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
     av:hasParameter
         [av:key "rules" ; av:value """
             @prefix om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>.
-            [baseUnits: (om:InternationalSystemOfUnits om:hasBaseUnit ?unit) -> (?unit <tmp:oneEqualsOfBase> 1.0) ]
-            [fractionUnits: (?unit3 om:hasNumerator ?numerator), (?unit3 om:hasDenominator ?denominator), (?numerator <tmp:oneEqualsOfBase> ?oneEqualsNumerator), (?denominator <tmp:oneEqualsOfBase> ?oneEqualsDenominator), quotient(?oneEqualsNumerator, ?oneEqualsDenominator, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
+            [baseUnits: (om:InternationalSystemOfUnits om:hasBaseUnit ?unit) -> (?unit <tmp:oneEqualsOfBase> "1.0"^^xsd:decimal) ]
+            [fractionUnits: (?unit om:hasNumerator ?numerator), (?unit om:hasDenominator ?denominator), (?numerator <tmp:oneEqualsOfBase> ?oneEqualsNumerator), (?denominator <tmp:oneEqualsOfBase> ?oneEqualsDenominator), quotient(?oneEqualsNumerator, ?oneEqualsDenominator, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
             [prefixUnits: (?unit om:hasUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference) (?unit om:hasPrefix ?prefix), (?prefix om:hasFactor ?prefixFactor), product(?oneEqualsOfReference, ?prefixFactor, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
             [squareUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent 2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
             [cubicUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent 3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
@@ -484,14 +377,14 @@ _:sweet3conversions a av:Step ;
     rdfs:label "SWEET3 Conversions Closure"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:FBRuleReasoningProcessor ;
-    p-plan:isPrecededBy _:sweet3additionalLabels ;
+    p-plan:isPrecededBy _:sweet3SourceUnits ;
     av:associatedDataset <http://sweetontology.net/> ;
     av:hasParameter
         [av:key "rules" ; av:value """
             @prefix sorelm: <http://sweetontology.net/relaMath/> .
             @prefix sorelsc: <http://sweetontology.net/relaSci/> .
             @prefix sorepsu: <http://sweetontology.net/reprSciUnits/> .
-            [baseUnits: (?unit a sorepsu:BaseUnit) -> (?unit <tmp:oneEqualsOfBase> "1.0"^^xsd:double), (?unit <tmp:zeroAtOfBase> "0.0"^^xsd:double) ]
+            [baseUnits: (?unit a sorepsu:BaseUnit) -> (?unit <tmp:oneEqualsOfBase> "1.0"^^xsd:decimal), (?unit <tmp:zeroAtOfBase> "0.0"^^xsd:decimal) ]
             [scaledUnits: (?unit a sorepsu:UnitDerivedByScaling), (?unit sorelm:hasScalingNumber ?scalingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtOfBase), product(?scalingNumber, ?oneEqualsReference, ?oneEqualsOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
             [shiftedUnits: (?unit a sorepsu:UnitDerivedByShifting), (?unit sorelm:hasScalingNumber ?scalingNumber), (?unit sorelm:hasShiftingNumber ?shiftingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference), product(?scalingNumber, ?oneEqualsReference, ?oneEqualsOfBase), difference(?shiftingNumber, ?oneEqualsReference, ?scaledShiftingNumber), sum(?zeroAtReference, ?scaledShiftingNumber, ?zeroAtOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
             [shiftedUnitsWithoutScalingNumber: (?unit a sorepsu:UnitDerivedByShifting), noValue(?unit, sorelm:hasScalingNumber), (?unit sorelm:hasShiftingNumber ?shiftingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference), difference(?shiftingNumber, ?oneEqualsReference, ?scaledShiftingNumber), sum(?zeroAtReference, ?scaledShiftingNumber, ?zeroAtOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
@@ -605,15 +498,15 @@ _:presentCorrespondences a av:Step ;
     rdfs:label "Present Correspondences"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UsePresentMappingProcessor ;
-    p-plan:isPrecededBy _:om2conversions, _:qudt2additionalLabels, _:sweet3conversions, _:wikidataSource ;
+    p-plan:isPrecededBy _:om2conversions, _:qudt2Sourcequdt, _:qudt2Sourcedatatype, _:qudt2Sourceconstant, _:qudt2Sourceprefix, _:qudt2Sourcesoqk, _:qudt2Sourcedimensionvector, _:qudt2Sourcequantitykind, _:qudt2Sourcesou, _:qudt2Sourceunit, _:sweet3conversions, _:wikidataSource ;
     av:predefinedMetaDataGraph _:manualCorrespondences ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
         [av:key "variable" ; av:value "sameAs" ] ;
     .
 
-_:unitUcumMapping a av:Step ;
-    rdfs:label "Unit UCUM Mapping"@en;
+_:unitMappingUcum a av:Step ;
+    rdfs:label "Unit Mapping using UCUM"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:EquivalentValueMappingProcessor ;
     p-plan:isPrecededBy _:presentCorrespondences ;
@@ -622,23 +515,11 @@ _:unitUcumMapping a av:Step ;
         [av:key "variables" ; av:value "ucum" ] ;
     .
 
-_:unitLabelMapping a av:Step ;
-    rdfs:label "Unit Label Mapping"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:JaroWinklerMappingProcessor ;
-    p-plan:isPrecededBy _:unitUcumMapping ;
-    av:hasParameter
-        [av:key "threshold" ; av:value 9e-1 ] ,
-        [av:key "caseSensitive" ; av:value false ] ,
-        [av:key "aspect" ; av:value _:aspectUnit ] ,
-        [av:key "variables" ; av:value "label" ] ;
-    .
-
 _:completeness a av:Step;
     rdfs:label "Assess Completeness"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:CompletenessProcessor ;
-    p-plan:isPrecededBy _:unitLabelMapping ;
+    p-plan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspects" ; av:value _:aspectUnit ] ;
     .
@@ -647,7 +528,7 @@ _:unitComparison a av:Step ;
     rdfs:label "Unit Comparison"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
-    p-plan:isPrecededBy _:unitLabelMapping ;
+    p-plan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
         [av:key "variables" ; av:value "symbol", "oneEquals", "zeroAt" ] ;
@@ -657,7 +538,7 @@ _:quantityKindComparison a av:Step ;
     rdfs:label "Quantity Kind Comparison"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
-    p-plan:isPrecededBy _:unitLabelMapping ;
+    p-plan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
         [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
