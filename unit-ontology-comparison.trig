@@ -1,13 +1,13 @@
-@prefix av: <http://w3id.org/abecto/vocabulary#> .
-@prefix p-plan: <http://purl.org/net/p-plan#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix abecto: <java:de.uni_jena.cs.fusion.abecto.processor.> .
-@prefix om: <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
-@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix abecto:   <java:de.uni_jena.cs.fusion.abecto.processor.> .
+@prefix av:       <http://w3id.org/abecto/vocabulary#> .
+@prefix om:       <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
+@prefix pplan:    <http://purl.org/net/p-plan#> .
+@prefix qudt:     <http://qudt.org/schema/qudt/> .
 @prefix qudtUnit: <http://qudt.org/vocab/unit/> .
-@prefix sweetUnit: <http://sweetontology.net/reprSciUnits/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sorepsu:  <http://sweetontology.net/reprSciUnits/> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
 
 _:plan a av:Plan ;
     rdfs:label "Unit Ontology Comparison"@en;
@@ -78,15 +78,19 @@ _:aspectUnit a av:Aspect ;
     av:ofAspect _:aspectUnit ;
     av:associatedDataset <http://sweetontology.net/> ;
     av:definingQuery """
-        PREFIX sweetUnit: <http://sweetontology.net/relaSci/>
+        PREFIX sorepsu: <http://sweetontology.net/reprSciUnits/>
+        PREFIX sorelsc: <http://sweetontology.net/relaSci/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         SELECT ?unit ?label ?symbol ?ucum ?zeroAt ?oneEqualsOfBase
         WHERE {
-            ?unit a/rdfs:subClassOf* sweetUnit:Unit .
+            ?unit a/rdfs:subClassOf* sorepsu:Unit .
             OPTIONAL { ?unit rdfs:label ?label }
-            OPTIONAL { ?unit sweetUnit:hasSymbol ?symbol }
-            OPTIONAL { ?unit skos:notation ?ucum }
+            OPTIONAL { ?unit sorelsc:hasSymbol ?symbol }
+            OPTIONAL {
+                ?unit skos:notation ?ucumTmp .
+                BIND(str(?ucumTmp) AS ?ucum)
+            }
             OPTIONAL { ?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase }
             OPTIONAL { ?unit <tmp:zeroAtOfBase> ?zeroAt }
         }
@@ -217,7 +221,7 @@ _:aspectQuantityKind a av:Aspect ;
 
 _:om2Source a av:Step ;
     rdfs:label "Load OM2"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
     av:hasParameter [av:key "url" ; av:value <https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2.0.rdf>,
@@ -226,7 +230,7 @@ _:om2Source a av:Step ;
 
 _:qudt2Source a av:Step ;
     rdfs:label "Load QUDT2"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://qudt.org/> ;
     av:hasParameter [av:key "url" ; av:value <http://qudt.org/schema/qudt>,
@@ -242,7 +246,7 @@ _:qudt2Source a av:Step ;
 
 _:sweet3Source a av:Step ;
     rdfs:label "Load SWEET3"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://sweetontology.net/> ;
     av:hasParameter [av:key "url" ; av:value <http://sweetontology.net/reprSciUnits> ] ;
@@ -250,7 +254,7 @@ _:sweet3Source a av:Step ;
 
 _:wikidataSource a av:Step ;
     rdfs:label "Load Wikidata"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:SparqlSourceProcessor ;
     av:associatedDataset <http://www.wikidata.org/> ;
     av:hasParameter
@@ -301,9 +305,9 @@ _:wikidataSource a av:Step ;
 
 _:om2conversions a av:Step ;
     rdfs:label "OM2 Conversions Closure"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:om2Source ;
+    pplan:isPrecededBy _:om2Source ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
     av:hasParameter
         [av:key "query" ; av:value """
@@ -367,9 +371,9 @@ _:om2conversions a av:Step ;
 
 _:sweet3conversions a av:Step ;
     rdfs:label "SWEET3 Conversions Closure"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:SparqlConstructProcessor ;
-    p-plan:isPrecededBy _:sweet3Source ;
+    pplan:isPrecededBy _:sweet3Source ;
     av:associatedDataset <http://sweetontology.net/> ;
     av:hasParameter
         [av:key "query" ; av:value """
@@ -590,13 +594,13 @@ _:sweet3conversions a av:Step ;
 
 GRAPH _:manualCorrespondences
 {
-    om:one av:correspondsToResource qudtUnit:UNITLESS, sweetUnit:dimensionlessUnit .
+    om:one av:correspondsToResource qudtUnit:UNITLESS, sorepsu:dimensionlessUnit .
 
     om:wattSquareMetre av:correspondsToResource qudtUnit:W-M2 .
 
-    qudtUnit:DEG_C av:correspondsToResource sweetUnit:degreeC .
-    qudtUnit:DEG_F av:correspondsToResource sweetUnit:degreeF .
-    sweetUnit:MYA av:correspondsToResource sweetUnit:millenium .
+    qudtUnit:DEG_C av:correspondsToResource sorepsu:degreeC .
+    qudtUnit:DEG_F av:correspondsToResource sorepsu:degreeF .
+    sorepsu:MYA av:correspondsToResource sorepsu:millenium .
 
     om:gray av:correspondsNotToResource om:microgray .
     om:kilofarad av:correspondsNotToResource om:kiloweber .
@@ -633,8 +637,8 @@ GRAPH _:manualCorrespondences
     om:sievert av:correspondsNotToResource qudtUnit:MicroSV-PER-HR .
     om:tonne av:correspondsNotToResource qudtUnit:TON_Metric .
 
-    om:reciprocalPascalSecond-Time av:correspondsNotToResource sweetUnit:perPascal .
-    om:second-TimePerSquareMetre av:correspondsNotToResource sweetUnit:perSecondSquared .
+    om:reciprocalPascalSecond-Time av:correspondsNotToResource sorepsu:perPascal .
+    om:second-TimePerSquareMetre av:correspondsNotToResource sorepsu:perSecondSquared .
 
     qudtUnit:CAL_IT av:correspondsNotToResource qudtUnit:CAL_IT-PER-GM .
     qudtUnit:CAL_TH av:correspondsNotToResource qudtUnit:CAL_TH-PER-GM .
@@ -663,24 +667,24 @@ GRAPH _:manualCorrespondences
     qudtUnit:QT_US av:correspondsNotToResource qudtUnit:QT_US-PER-DAY .
     qudtUnit:W-M2 av:correspondsNotToResource qudtUnit:W-PER-FT2 .
 
-    qudtUnit:A_Ab av:correspondsNotToResource sweetUnit:ampere .
-    qudtUnit:C_Ab av:correspondsNotToResource sweetUnit:coulomb .
-    qudtUnit:MicroIN av:correspondsNotToResource sweetUnit:micron .
-    qudtUnit:PER-SEC-SR av:correspondsNotToResource sweetUnit:perSecondSquared .
-    qudtUnit:PER-SEC-M2 av:correspondsNotToResource sweetUnit:perSecondSquared .
-    sweetUnit:hertz av:correspondsNotToResource sweetUnit:perSecond .
-    sweetUnit:micrometer av:correspondsNotToResource sweetUnit:micron .
-    sweetUnit:million_km2 av:correspondsNotToResource sweetUnit:million_km3 .
+    qudtUnit:A_Ab av:correspondsNotToResource sorepsu:ampere .
+    qudtUnit:C_Ab av:correspondsNotToResource sorepsu:coulomb .
+    qudtUnit:MicroIN av:correspondsNotToResource sorepsu:micron .
+    qudtUnit:PER-SEC-SR av:correspondsNotToResource sorepsu:perSecondSquared .
+    qudtUnit:PER-SEC-M2 av:correspondsNotToResource sorepsu:perSecondSquared .
+    sorepsu:hertz av:correspondsNotToResource sorepsu:perSecond .
+    sorepsu:micrometer av:correspondsNotToResource sorepsu:micron .
+    sorepsu:million_km2 av:correspondsNotToResource sorepsu:million_km3 .
 
     _:aspectUnit av:relevantResource
-        <om:acre-International>, <om:ampere>, <om:centiare>, <om:centinewton>, <om:decinewton>, <om:decisiemens>, <om:decitesla>, <om:dryPint-US>, <om:dryQuart-US>, <om:exaampere>, <om:fluidOunce-US>, <om:gray>, <om:gray>, <om:horsepower-Water>, <om:kilofarad>, <om:kilofarad>, <om:kilogramPerHectare>, <om:kilotonne>, <om:kiloweber>, <om:kiloweber>, <om:megafarad>, <om:megagramPerLitre>, <om:metreKilogram>, <om:microgray>, <om:micrometre>, <om:micrometre>, <om:micron>, <om:micron>, <om:micron>, <om:microsievert>, <om:one>, <om:peck-US>, <om:reciprocalGram>, <om:reciprocalPascalSecond-Time>, <om:reciprocalSecond-Time>, <om:second-TimePerSquareMetre>, <om:second-TimePerSquareMetre>, <om:sievert>, <om:sievert>, <om:sievert>, <om:tonne>, <om:wattSquareMetre>, <qudtUnit:A_Ab>, <qudtUnit:A_Ab>, <qudtUnit:CAL_IT>, <qudtUnit:CAL_IT-PER-GM>, <qudtUnit:CAL_TH>, <qudtUnit:CAL_TH-PER-GM>, <qudtUnit:C_Ab>, <qudtUnit:CentiBAR>, <qudtUnit:CentiN-M>, <qudtUnit:DEG_C>, <qudtUnit:DEG_F>, <qudtUnit:DWT>, <qudtUnit:DeciB>, <qudtUnit:DeciN-M>, <qudtUnit:DeciS-PER-M>, <qudtUnit:GAL_UK>, <qudtUnit:GAL_US>, <qudtUnit:GON>, <qudtUnit:GR>, <qudtUnit:GRAY>, <qudtUnit:HP_Brake>, <qudtUnit:HZ>, <qudtUnit:HZ>, <qudtUnit:K-PER-MIN>, <qudtUnit:K-PER-W>, <qudtUnit:KiloBAR>, <qudtUnit:KiloBAR>, <qudtUnit:KiloGM-M-PER-SEC>, <qudtUnit:KiloGM-PER-M>, <qudtUnit:KiloGM-PER-SEC>, <qudtUnit:KiloP>, <qudtUnit:M-K>, <qudtUnit:M-PER-K>, <qudtUnit:M3-PER-DAY>, <qudtUnit:M3-PER-HR>, <qudtUnit:MHO_Stat>, <qudtUnit:MI>, <qudtUnit:MI2>, <qudtUnit:MegaA>, <qudtUnit:MegaBAR>, <qudtUnit:MegaGM-PER-M3>, <qudtUnit:MicroGRAY>, <qudtUnit:MicroGRAY>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroM>, <qudtUnit:MicroM>, <qudtUnit:MicroSV>, <qudtUnit:MicroSV>, <qudtUnit:MicroSV-PER-HR>, <qudtUnit:MicroSV-PER-HR>, <qudtUnit:MilliM2>, <qudtUnit:OZ-FT>, <qudtUnit:OZ-IN>, <qudtUnit:OZ_VOL_UK>, <qudtUnit:OZ_VOL_UK>, <qudtUnit:OZ_VOL_US>, <qudtUnit:OZ_VOL_US-PER-DAY>, <qudtUnit:PER-FT3>, <qudtUnit:PER-L>, <qudtUnit:PER-M>, <qudtUnit:PER-M3>, <qudtUnit:PER-MIN>, <qudtUnit:PER-MO>, <qudtUnit:PER-MilliM3>, <qudtUnit:PER-SEC>, <qudtUnit:PER-SEC-M2>, <qudtUnit:PER-SEC-M2>, <qudtUnit:PER-SEC-SR>, <qudtUnit:PER-WK>, <qudtUnit:PINT_UK>, <qudtUnit:PINT_UK>, <qudtUnit:PINT_US>, <qudtUnit:PINT_US-PER-DAY>, <qudtUnit:PINT_US_DRY>, <qudtUnit:PK_UK>, <qudtUnit:PK_UK>, <qudtUnit:PK_US_DRY>, <qudtUnit:QT_UK>, <qudtUnit:QT_UK>, <qudtUnit:QT_US>, <qudtUnit:QT_US-PER-DAY>, <qudtUnit:QT_US_DRY>, <qudtUnit:SV>, <qudtUnit:S_Stat>, <qudtUnit:TON_Metric>, <qudtUnit:UNITLESS>, <qudtUnit:W-M2>, <qudtUnit:W-M2>, <qudtUnit:W-PER-FT2>, <sweetUnit:MYA>, <sweetUnit:ampere>, <sweetUnit:coulomb>, <sweetUnit:degreeC>, <sweetUnit:degreeF>, <sweetUnit:dimensionlessUnit>, <sweetUnit:hertz>, <sweetUnit:micrometer>, <sweetUnit:micron>, <sweetUnit:micron>, <sweetUnit:millenium>, <sweetUnit:million_km2>, <sweetUnit:million_km3>, <sweetUnit:perPascal>, <sweetUnit:perSecond>, <sweetUnit:perSecondSquared>, <sweetUnit:perSecondSquared>, <sweetUnit:perSecondSquared> .
+        <om:acre-International>, <om:ampere>, <om:centiare>, <om:centinewton>, <om:decinewton>, <om:decisiemens>, <om:decitesla>, <om:dryPint-US>, <om:dryQuart-US>, <om:exaampere>, <om:fluidOunce-US>, <om:gray>, <om:gray>, <om:horsepower-Water>, <om:kilofarad>, <om:kilofarad>, <om:kilogramPerHectare>, <om:kilotonne>, <om:kiloweber>, <om:kiloweber>, <om:megafarad>, <om:megagramPerLitre>, <om:metreKilogram>, <om:microgray>, <om:micrometre>, <om:micrometre>, <om:micron>, <om:micron>, <om:micron>, <om:microsievert>, <om:one>, <om:peck-US>, <om:reciprocalGram>, <om:reciprocalPascalSecond-Time>, <om:reciprocalSecond-Time>, <om:second-TimePerSquareMetre>, <om:second-TimePerSquareMetre>, <om:sievert>, <om:sievert>, <om:sievert>, <om:tonne>, <om:wattSquareMetre>, <qudtUnit:A_Ab>, <qudtUnit:A_Ab>, <qudtUnit:CAL_IT>, <qudtUnit:CAL_IT-PER-GM>, <qudtUnit:CAL_TH>, <qudtUnit:CAL_TH-PER-GM>, <qudtUnit:C_Ab>, <qudtUnit:CentiBAR>, <qudtUnit:CentiN-M>, <qudtUnit:DEG_C>, <qudtUnit:DEG_F>, <qudtUnit:DWT>, <qudtUnit:DeciB>, <qudtUnit:DeciN-M>, <qudtUnit:DeciS-PER-M>, <qudtUnit:GAL_UK>, <qudtUnit:GAL_US>, <qudtUnit:GON>, <qudtUnit:GR>, <qudtUnit:GRAY>, <qudtUnit:HP_Brake>, <qudtUnit:HZ>, <qudtUnit:HZ>, <qudtUnit:K-PER-MIN>, <qudtUnit:K-PER-W>, <qudtUnit:KiloBAR>, <qudtUnit:KiloBAR>, <qudtUnit:KiloGM-M-PER-SEC>, <qudtUnit:KiloGM-PER-M>, <qudtUnit:KiloGM-PER-SEC>, <qudtUnit:KiloP>, <qudtUnit:M-K>, <qudtUnit:M-PER-K>, <qudtUnit:M3-PER-DAY>, <qudtUnit:M3-PER-HR>, <qudtUnit:MHO_Stat>, <qudtUnit:MI>, <qudtUnit:MI2>, <qudtUnit:MegaA>, <qudtUnit:MegaBAR>, <qudtUnit:MegaGM-PER-M3>, <qudtUnit:MicroGRAY>, <qudtUnit:MicroGRAY>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroM>, <qudtUnit:MicroM>, <qudtUnit:MicroSV>, <qudtUnit:MicroSV>, <qudtUnit:MicroSV-PER-HR>, <qudtUnit:MicroSV-PER-HR>, <qudtUnit:MilliM2>, <qudtUnit:OZ-FT>, <qudtUnit:OZ-IN>, <qudtUnit:OZ_VOL_UK>, <qudtUnit:OZ_VOL_UK>, <qudtUnit:OZ_VOL_US>, <qudtUnit:OZ_VOL_US-PER-DAY>, <qudtUnit:PER-FT3>, <qudtUnit:PER-L>, <qudtUnit:PER-M>, <qudtUnit:PER-M3>, <qudtUnit:PER-MIN>, <qudtUnit:PER-MO>, <qudtUnit:PER-MilliM3>, <qudtUnit:PER-SEC>, <qudtUnit:PER-SEC-M2>, <qudtUnit:PER-SEC-M2>, <qudtUnit:PER-SEC-SR>, <qudtUnit:PER-WK>, <qudtUnit:PINT_UK>, <qudtUnit:PINT_UK>, <qudtUnit:PINT_US>, <qudtUnit:PINT_US-PER-DAY>, <qudtUnit:PINT_US_DRY>, <qudtUnit:PK_UK>, <qudtUnit:PK_UK>, <qudtUnit:PK_US_DRY>, <qudtUnit:QT_UK>, <qudtUnit:QT_UK>, <qudtUnit:QT_US>, <qudtUnit:QT_US-PER-DAY>, <qudtUnit:QT_US_DRY>, <qudtUnit:SV>, <qudtUnit:S_Stat>, <qudtUnit:TON_Metric>, <qudtUnit:UNITLESS>, <qudtUnit:W-M2>, <qudtUnit:W-M2>, <qudtUnit:W-PER-FT2>, <sorepsu:MYA>, <sorepsu:ampere>, <sorepsu:coulomb>, <sorepsu:degreeC>, <sorepsu:degreeF>, <sorepsu:dimensionlessUnit>, <sorepsu:hertz>, <sorepsu:micrometer>, <sorepsu:micron>, <sorepsu:micron>, <sorepsu:millenium>, <sorepsu:million_km2>, <sorepsu:million_km3>, <sorepsu:perPascal>, <sorepsu:perSecond>, <sorepsu:perSecondSquared>, <sorepsu:perSecondSquared>, <sorepsu:perSecondSquared> .
 }
 
 _:presentCorrespondences a av:Step ;
     rdfs:label "Present Correspondences"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:UsePresentMappingProcessor ;
-    p-plan:isPrecededBy _:om2conversions, _:qudt2Source, _:sweet3conversions, _:wikidataSource ;
+    pplan:isPrecededBy _:om2conversions, _:qudt2Source, _:sweet3conversions, _:wikidataSource ;
     av:predefinedMetaDataGraph _:manualCorrespondences ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
@@ -689,9 +693,9 @@ _:presentCorrespondences a av:Step ;
 
 _:unitMappingUcum a av:Step ;
     rdfs:label "Unit Mapping using UCUM"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:EquivalentValueMappingProcessor ;
-    p-plan:isPrecededBy _:presentCorrespondences ;
+    pplan:isPrecededBy _:presentCorrespondences ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
         [av:key "variables" ; av:value "ucum" ] ;
@@ -699,18 +703,18 @@ _:unitMappingUcum a av:Step ;
 
 _:completeness a av:Step;
     rdfs:label "Assess Completeness"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:CompletenessProcessor ;
-    p-plan:isPrecededBy _:unitMappingUcum ;
+    pplan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspects" ; av:value _:aspectUnit ] ;
     .
 
 _:unitComparison a av:Step ;
     rdfs:label "Unit Comparison"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
-    p-plan:isPrecededBy _:unitMappingUcum ;
+    pplan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
         [av:key "variables" ; av:value "symbol", "oneEquals", "zeroAt" ] ;
@@ -718,9 +722,9 @@ _:unitComparison a av:Step ;
 
 _:quantityKindComparison a av:Step ;
     rdfs:label "Quantity Kind Comparison"@en;
-    p-plan:isStepOfPlan _:plan ;
+    pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
-    p-plan:isPrecededBy _:unitMappingUcum ;
+    pplan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
         [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
