@@ -220,82 +220,28 @@ _:om2Source a av:Step ;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
-    av:hasParameter [av:key "url" ; av:value <https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2.0.rdf> ] ;
-    .
-_:om2SourceUcum a av:Step ;
-    rdfs:label "Load OM2 UCUM"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
-    av:hasParameter [av:key "url" ; av:value <https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2-ucum.ttl> ] ;
+    av:hasParameter [av:key "url" ; av:value <https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2.0.rdf>,
+                                             <https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2-ucum.ttl> ] ;
     .
 
-_:qudt2Sourcequdt a av:Step ;
-    rdfs:label "Load QUDT2 Schema"@en;
+_:qudt2Source a av:Step ;
+    rdfs:label "Load QUDT2"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/schema/qudt> ] ;
-    .
-_:qudt2Sourcedatatype a av:Step ;
-    rdfs:label "Load QUDT2 Datatypes"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/schema/datatype> ] ;
-    .
-_:qudt2Sourceconstant a av:Step ;
-    rdfs:label "Load QUDT2 Constants"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/constant> ] ;
-    .
-_:qudt2Sourcedimensionvector a av:Step ;
-    rdfs:label "Load QUDT2 Dimension Vectors"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/dimensionvector> ] ;
-    .
-_:qudt2Sourcequantitykind a av:Step ;
-    rdfs:label "Load QUDT2 Quantity Kinds"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/quantitykind> ] ;
-    .
-_:qudt2Sourcesou a av:Step ;
-    rdfs:label "Load QUDT2 Systems of Units"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/sou> ] ;
-    .
-_:qudt2Sourceunit a av:Step ;
-    rdfs:label "Load QUDT2 Units"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/unit> ] ;
-    .
-_:qudt2Sourceprefix a av:Step ;
-    rdfs:label "Load QUDT2 Prefix"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/prefix> ] ;
-    .
-_:qudt2Sourcesoqk a av:Step ;
-    rdfs:label "Load QUDT2 Systems of Quantity Kinds"@en;
-    p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:UrlSourceProcessor ;
-    av:associatedDataset <http://qudt.org/> ;
-    av:hasParameter [av:key "url" ; av:value <http://qudt.org/vocab/soqk> ] ;
+    av:hasParameter [av:key "url" ; av:value <http://qudt.org/schema/qudt>,
+                                             <http://qudt.org/schema/datatype>,
+                                             <http://qudt.org/vocab/constant>,
+                                             <http://qudt.org/vocab/dimensionvector>,
+                                             <http://qudt.org/vocab/quantitykind>,
+                                             <http://qudt.org/vocab/sou>,
+                                             <http://qudt.org/vocab/unit>,
+                                             <http://qudt.org/vocab/prefix>,
+                                             <http://qudt.org/vocab/soqk> ] ;
     .
 
-_:sweet3SourceUnits a av:Step ;
-    rdfs:label "Load SWEET3 Units"@en;
+_:sweet3Source a av:Step ;
+    rdfs:label "Load SWEET3"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UrlSourceProcessor ;
     av:associatedDataset <http://sweetontology.net/> ;
@@ -356,54 +302,290 @@ _:wikidataSource a av:Step ;
 _:om2conversions a av:Step ;
     rdfs:label "OM2 Conversions Closure"@en;
     p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:FBRuleReasoningProcessor ;
-    p-plan:isPrecededBy _:om2Source, _:om2SourceUcum ;
+    av:processorClass abecto:SparqlConstructProcessor ;
+    p-plan:isPrecededBy _:om2Source ;
     av:associatedDataset <http://www.ontology-of-units-of-measure.org/resource/om-2/> ;
     av:hasParameter
-        [av:key "rules" ; av:value """
-            @prefix om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>.
-            [baseUnits: (om:InternationalSystemOfUnits om:hasBaseUnit ?unit) -> (?unit <tmp:oneEqualsOfBase> "1.0"^^xsd:decimal) ]
-            [fractionUnits: (?unit om:hasNumerator ?numerator), (?unit om:hasDenominator ?denominator), (?numerator <tmp:oneEqualsOfBase> ?oneEqualsNumerator), (?denominator <tmp:oneEqualsOfBase> ?oneEqualsDenominator), quotient(?oneEqualsNumerator, ?oneEqualsDenominator, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [prefixUnits: (?unit om:hasUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference) (?unit om:hasPrefix ?prefix), (?prefix om:hasFactor ?prefixFactor), product(?oneEqualsOfReference, ?prefixFactor, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [squareUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent 2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [cubicUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent 3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [reciprocalUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent -1), quotient(1, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [reciprocalSquareUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent -2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), quotient(1, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [reciprocalcubicUnits: (?unit om:hasBase ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit om:hasExponent -3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?cubic), quotient(1, ?cubic, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-        """ ] ;
+        [av:key "query" ; av:value """
+            PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>
+            CONSTRUCT {
+                ?unit <tmp:oneEqualsOfBase> ?oneEquals
+            } WHERE {
+                {
+                    # baseUnits
+                    om:InternationalSystemOfUnits om:hasBaseUnit ?unit .
+                    BIND(1.0 AS ?oneEquals)
+                } UNION {
+                    # fractionUnits
+                    ?unit om:hasNumerator ?numerator .
+                    ?unit om:hasDenominator ?denominator .
+                    ?numerator <tmp:oneEqualsOfBase> ?oneEqualsNumerator .
+                    ?denominator <tmp:oneEqualsOfBase> ?oneEqualsDenominator .
+                    BIND(?oneEqualsNumerator / ?oneEqualsDenominator AS ?oneEquals)
+                } UNION {
+                    # prefixUnits
+                    ?unit om:hasUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit om:hasPrefix ?prefix .
+                    ?prefix om:hasFactor ?prefixFactor .
+                    BIND(?oneEqualsOfReference * ?prefixFactor AS ?oneEquals)
+                } UNION {
+                    # squareUnits
+                    ?unit om:hasBase ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit om:hasExponent 2 .
+                    BIND(?oneEqualsOfReference * ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # cubicUnits
+                    ?unit om:hasBase ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit om:hasExponent 3 .
+                    BIND(?oneEqualsOfReference * ?oneEqualsOfReference * ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # reciprocalUnits
+                    ?unit om:hasBase ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit om:hasExponent -1 .
+                    BIND(1.0 / ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # reciprocalSquareUnits
+                    ?unit om:hasBase ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit om:hasExponent -2 .
+                    BIND(1.0 / ( ?oneEqualsOfReference * ?oneEqualsOfReference ) AS ?oneEquals)
+                } UNION {
+                    # reciprocalcubicUnits
+                    ?unit om:hasBase ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit om:hasExponent -3 .
+                    BIND(1.0 / ( ?oneEqualsOfReference * ?oneEqualsOfReference * ?oneEqualsOfReference ) AS ?oneEquals)
+                }
+            }
+        """^^av:SparqlQuery ] ,
+        [av:key "maxIterations" ; av:value 5 ] ;
     .
 
 _:sweet3conversions a av:Step ;
     rdfs:label "SWEET3 Conversions Closure"@en;
     p-plan:isStepOfPlan _:plan ;
-    av:processorClass abecto:FBRuleReasoningProcessor ;
-    p-plan:isPrecededBy _:sweet3SourceUnits ;
+    av:processorClass abecto:SparqlConstructProcessor ;
+    p-plan:isPrecededBy _:sweet3Source ;
     av:associatedDataset <http://sweetontology.net/> ;
     av:hasParameter
-        [av:key "rules" ; av:value """
-            @prefix sorelm: <http://sweetontology.net/relaMath/> .
-            @prefix sorelsc: <http://sweetontology.net/relaSci/> .
-            @prefix sorepsu: <http://sweetontology.net/reprSciUnits/> .
-            [baseUnits: (?unit a sorepsu:BaseUnit) -> (?unit <tmp:oneEqualsOfBase> "1.0"^^xsd:decimal), (?unit <tmp:zeroAtOfBase> "0.0"^^xsd:decimal) ]
-            [scaledUnits: (?unit a sorepsu:UnitDerivedByScaling), (?unit sorelm:hasScalingNumber ?scalingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtOfBase), product(?scalingNumber, ?oneEqualsReference, ?oneEqualsOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
-            [shiftedUnits: (?unit a sorepsu:UnitDerivedByShifting), (?unit sorelm:hasScalingNumber ?scalingNumber), (?unit sorelm:hasShiftingNumber ?shiftingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference), product(?scalingNumber, ?oneEqualsReference, ?oneEqualsOfBase), difference(?shiftingNumber, ?oneEqualsReference, ?scaledShiftingNumber), sum(?zeroAtReference, ?scaledShiftingNumber, ?zeroAtOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
-            [shiftedUnitsWithoutScalingNumber: (?unit a sorepsu:UnitDerivedByShifting), noValue(?unit, sorelm:hasScalingNumber), (?unit sorelm:hasShiftingNumber ?shiftingNumber), (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference), difference(?shiftingNumber, ?oneEqualsReference, ?scaledShiftingNumber), sum(?zeroAtReference, ?scaledShiftingNumber, ?zeroAtOfBase) -> (?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase), (?unit <tmp:zeroAtOfBase> ?zeroAtOfBase) ]
-            [squareUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower 2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [cubicUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower 3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [reciprocalUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower -1), quotient(1, ?oneEqualsOfReference, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [reciprocalSquareUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower -2), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), quotient(1, ?square, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [reciprocalcubicUnits: (?unit sorelsc:hasBaseUnit ?referenceUnit), (?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference), (?unit sorelm:toThePower -3), product(?oneEqualsOfReference, ?oneEqualsOfReference, ?square), product(?oneEqualsOfReference, ?square, ?cubic), quotient(1, ?cubic, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-            [productOf2Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), noValue(?unit sorelm:hasOperand ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit3), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
-            ]
-            [productOf3Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), noValue(?unit sorelm:hasOperand ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit4), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
-            ]
-            [productOf4Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), (?unit sorelm:hasOperand ?referenceUnit4), noValue(?unit sorelm:hasOperand ?referenceUnit5), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit5), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit5), notEqual(?referenceUnit3, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit5), notEqual(?referenceUnit4, ?referenceUnit5), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEqualsTmp2) product(?oneEqualsTmp2, ?oneEqualsOfReference4, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
-            ]
-            [productOf5Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), (?unit sorelm:hasOperand ?referenceUnit4), (?unit sorelm:hasOperand ?referenceUnit5), noValue(?unit sorelm:hasOperand ?referenceUnit6), notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit5), notEqual(?referenceUnit1, ?referenceUnit6), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit5), notEqual(?referenceUnit2, ?referenceUnit6), notEqual(?referenceUnit3, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit5), notEqual(?referenceUnit3, ?referenceUnit6), notEqual(?referenceUnit4, ?referenceUnit5), notEqual(?referenceUnit4, ?referenceUnit6), notEqual(?referenceUnit5, ?referenceUnit6), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEqualsTmp2) product(?oneEqualsTmp2, ?oneEqualsOfReference4, ?oneEqualsTmp3) product(?oneEqualsTmp3, ?oneEqualsOfReference5, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals)
-            ]
-            [productOf6Units: (?unit a sorepsu:UnitDefinedByProduct), (?unit sorelm:hasOperand ?referenceUnit1), (?unit sorelm:hasOperand ?referenceUnit2), (?unit sorelm:hasOperand ?referenceUnit3), (?unit sorelm:hasOperand ?referenceUnit4), (?unit sorelm:hasOperand ?referenceUnit5), (?unit sorelm:hasOperand ?referenceUnit6), noValue(?unit sorelm:hasOperand ?referenceUnit7),
-                notEqual(?referenceUnit1, ?referenceUnit2), notEqual(?referenceUnit1, ?referenceUnit3), notEqual(?referenceUnit1, ?referenceUnit4), notEqual(?referenceUnit1, ?referenceUnit5), notEqual(?referenceUnit1, ?referenceUnit6), notEqual(?referenceUnit1, ?referenceUnit7), notEqual(?referenceUnit2, ?referenceUnit3), notEqual(?referenceUnit2, ?referenceUnit4), notEqual(?referenceUnit2, ?referenceUnit5), notEqual(?referenceUnit2, ?referenceUnit6), notEqual(?referenceUnit2, ?referenceUnit7), notEqual(?referenceUnit3, ?referenceUnit4), notEqual(?referenceUnit3, ?referenceUnit5), notEqual(?referenceUnit3, ?referenceUnit6), notEqual(?referenceUnit3, ?referenceUnit7), notEqual(?referenceUnit4, ?referenceUnit5), notEqual(?referenceUnit4, ?referenceUnit6), notEqual(?referenceUnit4, ?referenceUnit7), notEqual(?referenceUnit5, ?referenceUnit6), notEqual(?referenceUnit5, ?referenceUnit7), notEqual(?referenceUnit6, ?referenceUnit7), (?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1), (?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2), product(?oneEqualsOfReference1, ?oneEqualsOfReference2, ?oneEqualsTmp1) product(?oneEqualsTmp1, ?oneEqualsOfReference3, ?oneEqualsTmp2) product(?oneEqualsTmp2, ?oneEqualsOfReference4, ?oneEqualsTmp3) product(?oneEqualsTmp3, ?oneEqualsOfReference5, ?oneEqualsTmp4) product(?oneEqualsTmp4, ?oneEqualsOfReference6, ?oneEquals) -> (?unit <tmp:oneEqualsOfBase> ?oneEquals) ]
-        """ ] ;
+        [av:key "query" ; av:value """
+            PREFIX sorelm: <http://sweetontology.net/relaMath/>
+            PREFIX sorelsc: <http://sweetontology.net/relaSci/>
+            PREFIX sorepsu: <http://sweetontology.net/reprSciUnits/>
+            CONSTRUCT {
+                ?unit <tmp:oneEqualsOfBase> ?oneEquals .
+                ?unit <tmp:zeroAtOfBase> ?zeroAtOfBase .
+            } WHERE {
+                {
+                    # baseUnits
+                    ?unit a sorepsu:BaseUnit .
+                    BIND(1.0 AS ?oneEquals)
+                    BIND(0.0 AS ?zeroAtOfBase)
+                } UNION {
+                    # scaledUnits
+                    ?unit a sorepsu:UnitDerivedByScaling .
+                    ?unit sorelm:hasScalingNumber ?scalingNumber .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference .
+                    ?referenceUnit <tmp:zeroAtOfBase> ?zeroAtOfBase .
+                    BIND(?scalingNumber * ?oneEqualsReference AS ?oneEqualsOfBase)
+                } UNION {
+                    # shiftedUnits
+                    ?unit a sorepsu:UnitDerivedByShifting .
+                    ?unit sorelm:hasScalingNumber ?scalingNumber .
+                    ?unit sorelm:hasShiftingNumber ?shiftingNumber .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsReference .
+                    ?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference .
+                    BIND(?scalingNumber * ?oneEqualsReference AS ?oneEqualsOfBase)
+                    BIND(?zeroAtReference + ?shiftingNumber / ?oneEqualsReference AS ?zeroAtOfBase)
+                } UNION {
+                    # shiftedUnitsWithoutScalingNumber
+                    ?unit a sorepsu:UnitDerivedByShifting .
+                    FILTER NOT EXISTS {?unit sorelm:hasScalingNumber ?scalingNumber}
+                    ?unit sorelm:hasShiftingNumber ?shiftingNumber .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfBase .
+                    ?referenceUnit <tmp:zeroAtOfBase> ?zeroAtReference .
+                    BIND(?zeroAtReference + ?shiftingNumber / ?oneEqualsReference AS ?zeroAtOfBase)
+                } UNION {
+                    # squareUnits
+                    ?unit a sorepsu:UnitDerivedByRaisingToPower .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit sorelm:toThePower ?toThePower .
+                    FILTER(?toThePower = 2)
+                    BIND(?oneEqualsOfReference * ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # cubicUnits
+                    ?unit a sorepsu:UnitDerivedByRaisingToPower .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit sorelm:toThePower ?toThePower .
+                    FILTER(?toThePower = 3)
+                    BIND(?oneEqualsOfReference * ?oneEqualsOfReference * ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # reciprocalUnits
+                    ?unit a sorepsu:UnitDerivedByRaisingToPower .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit sorelm:toThePower ?toThePower .
+                    FILTER(?toThePower = -1)
+                    BIND(1 / ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # reciprocalSquareUnits
+                    ?unit a sorepsu:UnitDerivedByRaisingToPower .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit sorelm:toThePower ?toThePower .
+                    FILTER(?toThePower = -2)
+                    BIND(1 / ?oneEqualsOfReference * ?oneEqualsOfReference AS ?oneEquals)
+                } UNION {
+                    # reciprocalcubicUnits
+                    ?unit a sorepsu:UnitDerivedByRaisingToPower .
+                    ?unit sorelsc:hasBaseUnit ?referenceUnit .
+                    ?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+                    ?unit sorelm:toThePower ?toThePower .
+                    FILTER(?toThePower = -3)
+                    BIND(1 / ?oneEqualsOfReference * ?oneEqualsOfReference * ?oneEqualsOfReference  AS ?oneEquals)
+                } UNION {
+                    # productOf2Units
+                    ?unit a sorepsu:UnitDefinedByProduct .
+                    ?unit sorelm:hasOperand ?referenceUnit1 .
+                    ?unit sorelm:hasOperand ?referenceUnit2 .
+                    FILTER(?referenceUnit1 != ?referenceUnit2)
+                    FILTER NOT EXISTS {
+                        ?unit sorelm:hasOperand ?referenceUnit3 .
+                        FILTER(?referenceUnit1 != ?referenceUnit3)
+                        FILTER(?referenceUnit2 != ?referenceUnit3)
+                    }
+                    ?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1 .
+                    ?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2 .
+                    BIND(?oneEqualsOfReference1 * ?oneEqualsOfReference2 AS ?oneEquals)
+                } UNION {
+                    # productOf3Units
+                    ?unit a sorepsu:UnitDefinedByProduct .
+                    ?unit sorelm:hasOperand ?referenceUnit1 .
+                    ?unit sorelm:hasOperand ?referenceUnit2 .
+                    ?unit sorelm:hasOperand ?referenceUnit3 .
+                    FILTER(?referenceUnit1 != ?referenceUnit2)
+                    FILTER(?referenceUnit1 != ?referenceUnit3)
+                    FILTER(?referenceUnit2 != ?referenceUnit3)
+                    FILTER NOT EXISTS {
+                        ?unit sorelm:hasOperand ?referenceUnit4 .
+                        FILTER(?referenceUnit1 != ?referenceUnit4)
+                        FILTER(?referenceUnit2 != ?referenceUnit4)
+                        FILTER(?referenceUnit3 != ?referenceUnit4)
+                    }
+                    ?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1 .
+                    ?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2 .
+                    ?referenceUnit3 <tmp:oneEqualsOfBase> ?oneEqualsOfReference3 .
+                    BIND(?oneEqualsOfReference1 * ?oneEqualsOfReference2 * ?oneEqualsOfReference3 AS ?oneEquals)
+                } UNION {
+                    # productOf4Units
+                    ?unit a sorepsu:UnitDefinedByProduct .
+                    ?unit sorelm:hasOperand ?referenceUnit1 .
+                    ?unit sorelm:hasOperand ?referenceUnit2 .
+                    ?unit sorelm:hasOperand ?referenceUnit3 .
+                    ?unit sorelm:hasOperand ?referenceUnit4 .
+                    FILTER(?referenceUnit1 != ?referenceUnit2)
+                    FILTER(?referenceUnit1 != ?referenceUnit3)
+                    FILTER(?referenceUnit1 != ?referenceUnit4)
+                    FILTER(?referenceUnit2 != ?referenceUnit3)
+                    FILTER(?referenceUnit2 != ?referenceUnit4)
+                    FILTER(?referenceUnit3 != ?referenceUnit4)
+                    FILTER NOT EXISTS {
+                        ?unit sorelm:hasOperand ?referenceUnit5 .
+                        FILTER(?referenceUnit1 != ?referenceUnit5)
+                        FILTER(?referenceUnit2 != ?referenceUnit5)
+                        FILTER(?referenceUnit3 != ?referenceUnit5)
+                        FILTER(?referenceUnit4 != ?referenceUnit5)
+                    }
+                    ?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1 .
+                    ?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2 .
+                    ?referenceUnit3 <tmp:oneEqualsOfBase> ?oneEqualsOfReference3 .
+                    ?referenceUnit4 <tmp:oneEqualsOfBase> ?oneEqualsOfReference4 .
+                    BIND(?oneEqualsOfReference1 * ?oneEqualsOfReference2 * ?oneEqualsOfReference3 * ?oneEqualsOfReference4 AS ?oneEquals)
+                } UNION {
+                    # productOf5Units
+                    ?unit a sorepsu:UnitDefinedByProduct .
+                    ?unit sorelm:hasOperand ?referenceUnit1 .
+                    ?unit sorelm:hasOperand ?referenceUnit2 .
+                    ?unit sorelm:hasOperand ?referenceUnit3 .
+                    ?unit sorelm:hasOperand ?referenceUnit4 .
+                    ?unit sorelm:hasOperand ?referenceUnit5 .
+                    FILTER(?referenceUnit1 != ?referenceUnit2)
+                    FILTER(?referenceUnit1 != ?referenceUnit3)
+                    FILTER(?referenceUnit1 != ?referenceUnit4)
+                    FILTER(?referenceUnit1 != ?referenceUnit5)
+                    FILTER(?referenceUnit2 != ?referenceUnit3)
+                    FILTER(?referenceUnit2 != ?referenceUnit4)
+                    FILTER(?referenceUnit2 != ?referenceUnit5)
+                    FILTER(?referenceUnit3 != ?referenceUnit4)
+                    FILTER(?referenceUnit3 != ?referenceUnit5)
+                    FILTER(?referenceUnit4 != ?referenceUnit5)
+                    FILTER NOT EXISTS {
+                        ?unit sorelm:hasOperand ?referenceUnit6 .
+                        FILTER(?referenceUnit1 != ?referenceUnit6)
+                        FILTER(?referenceUnit2 != ?referenceUnit6)
+                        FILTER(?referenceUnit3 != ?referenceUnit6)
+                        FILTER(?referenceUnit4 != ?referenceUnit6)
+                        FILTER(?referenceUnit5 != ?referenceUnit6)
+                    }
+                    ?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1 .
+                    ?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2 .
+                    ?referenceUnit3 <tmp:oneEqualsOfBase> ?oneEqualsOfReference3 .
+                    ?referenceUnit4 <tmp:oneEqualsOfBase> ?oneEqualsOfReference4 .
+                    ?referenceUnit5 <tmp:oneEqualsOfBase> ?oneEqualsOfReference5 .
+                    BIND(?oneEqualsOfReference1 * ?oneEqualsOfReference2 * ?oneEqualsOfReference3 * ?oneEqualsOfReference4 * ?oneEqualsOfReference5 AS ?oneEquals)
+                } UNION {
+                    # productOf6Units
+                    ?unit a sorepsu:UnitDefinedByProduct .
+                    ?unit sorelm:hasOperand ?referenceUnit1 .
+                    ?unit sorelm:hasOperand ?referenceUnit2 .
+                    ?unit sorelm:hasOperand ?referenceUnit3 .
+                    ?unit sorelm:hasOperand ?referenceUnit4 .
+                    ?unit sorelm:hasOperand ?referenceUnit5 .
+                    ?unit sorelm:hasOperand ?referenceUnit6 .
+                    FILTER(?referenceUnit1 != ?referenceUnit2)
+                    FILTER(?referenceUnit1 != ?referenceUnit3)
+                    FILTER(?referenceUnit1 != ?referenceUnit4)
+                    FILTER(?referenceUnit1 != ?referenceUnit5)
+                    FILTER(?referenceUnit1 != ?referenceUnit6)
+                    FILTER(?referenceUnit2 != ?referenceUnit3)
+                    FILTER(?referenceUnit2 != ?referenceUnit4)
+                    FILTER(?referenceUnit2 != ?referenceUnit5)
+                    FILTER(?referenceUnit2 != ?referenceUnit6)
+                    FILTER(?referenceUnit3 != ?referenceUnit4)
+                    FILTER(?referenceUnit3 != ?referenceUnit5)
+                    FILTER(?referenceUnit3 != ?referenceUnit6)
+                    FILTER(?referenceUnit4 != ?referenceUnit5)
+                    FILTER(?referenceUnit4 != ?referenceUnit6)
+                    FILTER(?referenceUnit5 != ?referenceUnit6)
+                    FILTER NOT EXISTS {
+                        ?unit sorelm:hasOperand ?referenceUnit7 .
+                        FILTER(?referenceUnit1 != ?referenceUnit7)
+                        FILTER(?referenceUnit2 != ?referenceUnit7)
+                        FILTER(?referenceUnit3 != ?referenceUnit7)
+                        FILTER(?referenceUnit4 != ?referenceUnit7)
+                        FILTER(?referenceUnit5 != ?referenceUnit7)
+                        FILTER(?referenceUnit6 != ?referenceUnit7)
+                    }
+                    ?referenceUnit1 <tmp:oneEqualsOfBase> ?oneEqualsOfReference1 .
+                    ?referenceUnit2 <tmp:oneEqualsOfBase> ?oneEqualsOfReference2 .
+                    ?referenceUnit3 <tmp:oneEqualsOfBase> ?oneEqualsOfReference3 .
+                    ?referenceUnit4 <tmp:oneEqualsOfBase> ?oneEqualsOfReference4 .
+                    ?referenceUnit5 <tmp:oneEqualsOfBase> ?oneEqualsOfReference5 .
+                    ?referenceUnit6 <tmp:oneEqualsOfBase> ?oneEqualsOfReference6 .
+                    BIND(?oneEqualsOfReference1 * ?oneEqualsOfReference2 * ?oneEqualsOfReference3 * ?oneEqualsOfReference4 * ?oneEqualsOfReference5 * ?oneEqualsOfReference6 AS ?oneEquals)
+                }
+            }
+        """^^av:SparqlQuery ] ,
+        [av:key "maxIterations" ; av:value 5 ] ;
     .
 
 GRAPH _:manualCorrespondences
@@ -498,7 +680,7 @@ _:presentCorrespondences a av:Step ;
     rdfs:label "Present Correspondences"@en;
     p-plan:isStepOfPlan _:plan ;
     av:processorClass abecto:UsePresentMappingProcessor ;
-    p-plan:isPrecededBy _:om2conversions, _:qudt2Sourcequdt, _:qudt2Sourcedatatype, _:qudt2Sourceconstant, _:qudt2Sourceprefix, _:qudt2Sourcesoqk, _:qudt2Sourcedimensionvector, _:qudt2Sourcequantitykind, _:qudt2Sourcesou, _:qudt2Sourceunit, _:sweet3conversions, _:wikidataSource ;
+    p-plan:isPrecededBy _:om2conversions, _:qudt2Source, _:sweet3conversions, _:wikidataSource ;
     av:predefinedMetaDataGraph _:manualCorrespondences ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
