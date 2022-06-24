@@ -14,10 +14,10 @@ java -jar abecto/target/abecto.jar --trig abecto-unit-ontology-comparison/unit-o
 
 ## Licenses
 
-* [ABECTO](https://github.com/fusion-jena/abecto) is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-* This comparison project is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+* This comparison project is licensed under a [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+* [ABECTO](https://github.com/fusion-jena/abecto) is licensed under a [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 * The generated result data are derived from the compared ontologies, which are licensed as follows:
 	* [OM 2](https://github.com/HajoRijgersberg/OM) by Hajo Rijgersberg, Don Willems, Jan Top ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
 	* [QUDT 2](http://qudt.org/) by QUDT.org ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
-	* [SWEET 3](https://github.com/ESIPFed/sweet) is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-	* [Wikidata](https://wikidata.org) [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/))
+	* [SWEET 3](https://github.com/ESIPFed/sweet) ([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/))
+	* [Wikidata](https://wikidata.org) ([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/))
