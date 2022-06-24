@@ -1,0 +1,40 @@
+name: Unit Ontology Comparison
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    container: ghcr.io/fusion-jena/abecto:latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2
+      - name: Run ABECTO Unit Ontology Comparison
+        run: abecto --trig unit-ontology-comparison-result.trig unit-ontology-comparison.trig
+      - name: Generate OM deviations report
+        run: abecto --loadOnly --reportOn "http://www.ontology-of-units-of-measure.org/resource/om-2/" --export deviations=unit-ontology-comparison-deviations-om2.csv unit-ontology-comparison-result.trig
+      - name: Archive OM deviations report
+        uses: actions/upload-artifact@v2
+        with:
+          name: OM deviations report
+          path: unit-ontology-comparison-deviations-om2.csv
+      - name: Generate QUDT deviations report
+        run: abecto --loadOnly --reportOn "http://qudt.org/" --export deviations=unit-ontology-comparison-deviations-qudt.csv unit-ontology-comparison-result.trig
+      - name: Archive QUDT deviations report
+        uses: actions/upload-artifact@v2
+        with:
+          name: QUDT deviations report
+          path: unit-ontology-comparison-deviations-qudt.csv
+      - name: Generate SWEET deviations report
+        run: abecto --loadOnly --reportOn "http://sweetontology.net/" --export deviations=unit-ontology-comparison-deviations-sweet.csv unit-ontology-comparison-result.trig
+      - name: Archive SWEET deviations report
+        uses: actions/upload-artifact@v2
+        with:
+          name: SWEET deviations report
+          path: unit-ontology-comparison-deviations-sweet.csv
+      - name: Generate Wikidata Mismatch Finder report
+        run: abecto --loadOnly --export wdMismatchFinder=unit-ontology-comparison-wdMismatchFinder.csv unit-ontology-comparison-result.trig
+      - name: Archive Wikidata Mismatch Finder report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Wikidata Mismatch Finder report
+          path: unit-ontology-comparison-wdMismatchFinder.csv
