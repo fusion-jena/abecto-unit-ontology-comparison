@@ -193,11 +193,13 @@ _:aspectQuantityKind a av:Aspect ;
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+        PREFIX p: <http://www.wikidata.org/prop/>
+        PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
         SELECT ?quantityKind ?label ?symbol ?amountOfSubstanceDimensionExponent ?electricCurrentDimensionExponent ?lengthDimensionExponent ?luminousIntensityDimensionExponent ?massDimensionExponent ?temperatureDimensionExponent ?timeDimensionExponent
         WHERE {
             { ?quantityKind rdfs:label ?label } UNION { ?quantityKind skos:altLabel ?label }
             OPTIONAL { ?quantityKind wdt:P7973 ?symbol }
-            ?quantityKind wdt:P4020 ?dimensionLabel .
+            ?quantityKind p:P7973/pq:P487 ?dimensionLabel .
             BIND(STRBEFORE(STRAFTER(STR(?dimensionLabel),"<annotation encoding=\\"application/x-tex\\">{\\\\displaystyle {"),"}</annotation>") AS ?dimensionLabelTex)
             BIND(REPLACE(?dimensionLabelTex,"\\\\\\\\mathsf \\\\{\\\\s*(\\\\S+)\\\\s*}}\\\\s*(\\\\{|$)","\\\\\\\\mathsf {$1}}^{1}$2") AS ?dimensionLabelTexWithOnes)
             BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {N}}^{"),"}")),0) AS ?amountOfSubstanceDimensionExponent)
@@ -701,15 +703,6 @@ _:unitMappingUcum a av:Step ;
         [av:key "variables" ; av:value "ucum" ] ;
     .
 
-_:completeness a av:Step;
-    rdfs:label "Assess Completeness"@en;
-    pplan:isStepOfPlan _:plan ;
-    av:processorClass abecto:CompletenessProcessor ;
-    pplan:isPrecededBy _:unitMappingUcum ;
-    av:hasParameter
-        [av:key "aspects" ; av:value _:aspectUnit ] ;
-    .
-
 _:unitComparison a av:Step ;
     rdfs:label "Unit Comparison"@en;
     pplan:isStepOfPlan _:plan ;
@@ -717,15 +710,36 @@ _:unitComparison a av:Step ;
     pplan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
-        [av:key "variables" ; av:value "symbol", "oneEquals", "zeroAt" ] ;
+        [av:key "variables" ; av:value "quantityKind", "symbol", "oneEquals", "zeroAt" ] ;
+    .
+
+_:quantityKindMappingLabel a av:Step ;
+    rdfs:label "Quantity Kind Mapping using labels"@en;
+    pplan:isStepOfPlan _:plan ;
+    av:processorClass abecto:JaroWinklerMappingProcessor ;
+    pplan:isPrecededBy _:presentCorrespondences ;
+    av:hasParameter
+        [av:key "threshold" ; av:value 9e-1 ] ,
+        [av:key "caseSensitive" ; av:value false ] ,
+        [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
+        [av:key "variables" ; av:value "label" ] ;
     .
 
 _:quantityKindComparison a av:Step ;
     rdfs:label "Quantity Kind Comparison"@en;
     pplan:isStepOfPlan _:plan ;
     av:processorClass abecto:LiteralValueComparisonProcessor ;
-    pplan:isPrecededBy _:unitMappingUcum ;
+    pplan:isPrecededBy _:quantityKindMappingLabel ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
         [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
+    .
+
+_:completeness a av:Step;
+    rdfs:label "Assess Completeness"@en;
+    pplan:isStepOfPlan _:plan ;
+    av:processorClass abecto:CompletenessProcessor ;
+    pplan:isPrecededBy _:unitMappingUcum, _:quantityKindMappingLabel ;
+    av:hasParameter
+        [av:key "aspects" ; av:value _:aspectUnit, _:aspectQuantityKind ] ;
     .
