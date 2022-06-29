@@ -196,11 +196,12 @@ _:aspectQuantityKind a av:Aspect ;
         PREFIX wdt: <http://www.wikidata.org/prop/direct/>
         PREFIX p: <http://www.wikidata.org/prop/>
         PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+        PREFIX ps: <http://www.wikidata.org/prop/statement/>
         SELECT ?quantityKind ?label ?symbol ?amountOfSubstanceDimensionExponent ?electricCurrentDimensionExponent ?lengthDimensionExponent ?luminousIntensityDimensionExponent ?massDimensionExponent ?temperatureDimensionExponent ?timeDimensionExponent
         WHERE {
             { ?quantityKind rdfs:label ?label } UNION { ?quantityKind skos:altLabel ?label }
-            OPTIONAL { ?quantityKind wdt:P7973 ?symbol }
-            ?quantityKind p:P7973/pq:P487 ?dimensionLabel .
+            OPTIONAL { ?quantityKind p:P7973/pq:P487 ?symbol }
+            ?quantityKind wdt:P4020 ?dimensionLabel .
             BIND(STRBEFORE(STRAFTER(STR(?dimensionLabel),"<annotation encoding=\\"application/x-tex\\">{\\\\displaystyle {"),"}</annotation>") AS ?dimensionLabelTex)
             BIND(REPLACE(?dimensionLabelTex,"\\\\\\\\mathsf \\\\{\\\\s*(\\\\S+)\\\\s*}}\\\\s*(\\\\{|$)","\\\\\\\\mathsf {$1}}^{1}$2") AS ?dimensionLabelTexWithOnes)
             BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"\\\\mathsf {N}}^{"),"}")),0) AS ?amountOfSubstanceDimensionExponent)
@@ -284,7 +285,8 @@ _:wikidataSource a av:Step ;
         [av:key "followUnlimited" ; av:value
             <http://www.wikidata.org/prop/direct/P279> ,
             <http://www.wikidata.org/prop/statement/value/P2442> ,
-            <http://www.wikidata.org/prop/P2442> ] ,
+            <http://www.wikidata.org/prop/P2442>,
+            <http://www.wikidata.org/prop/P7973> ] ,
         [av:key "ignoreInverse" ; av:value
             <http://wikiba.se/ontology#quantityUnit>,
             <http://www.wikidata.org/prop/qualifier/P642>,
