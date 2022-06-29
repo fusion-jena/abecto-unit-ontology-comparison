@@ -1,13 +1,14 @@
-@prefix abecto:   <java:de.uni_jena.cs.fusion.abecto.processor.> .
-@prefix av:       <http://w3id.org/abecto/vocabulary#> .
-@prefix om:       <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
-@prefix pplan:    <http://purl.org/net/p-plan#> .
-@prefix qudt:     <http://qudt.org/schema/qudt/> .
-@prefix qudtUnit: <http://qudt.org/vocab/unit/> .
-@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sorepsu:  <http://sweetontology.net/reprSciUnits/> .
-@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix abecto:           <java:de.uni_jena.cs.fusion.abecto.processor.> .
+@prefix av:               <http://w3id.org/abecto/vocabulary#> .
+@prefix om:               <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
+@prefix pplan:            <http://purl.org/net/p-plan#> .
+@prefix qudt:             <http://qudt.org/schema/qudt/> .
+@prefix qudtQuantityKind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudtUnit:         <http://qudt.org/vocab/unit/> .
+@prefix rdf:              <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:             <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sorepsu:          <http://sweetontology.net/reprSciUnits/> .
+@prefix xsd:              <http://www.w3.org/2001/XMLSchema#> .
 
 _:plan a av:Plan ;
     rdfs:label "Unit Ontology Comparison"@en;
@@ -679,7 +680,15 @@ GRAPH _:manualCorrespondences
     sorepsu:million_km2 av:correspondsNotToResource sorepsu:million_km3 .
 
     _:aspectUnit av:relevantResource
-        <om:acre-International>, <om:ampere>, <om:centiare>, <om:centinewton>, <om:decinewton>, <om:decisiemens>, <om:decitesla>, <om:dryPint-US>, <om:dryQuart-US>, <om:exaampere>, <om:fluidOunce-US>, <om:gray>, <om:gray>, <om:horsepower-Water>, <om:kilofarad>, <om:kilofarad>, <om:kilogramPerHectare>, <om:kilotonne>, <om:kiloweber>, <om:kiloweber>, <om:megafarad>, <om:megagramPerLitre>, <om:metreKilogram>, <om:microgray>, <om:micrometre>, <om:micrometre>, <om:micron>, <om:micron>, <om:micron>, <om:microsievert>, <om:one>, <om:peck-US>, <om:reciprocalGram>, <om:reciprocalPascalSecond-Time>, <om:reciprocalSecond-Time>, <om:second-TimePerSquareMetre>, <om:second-TimePerSquareMetre>, <om:sievert>, <om:sievert>, <om:sievert>, <om:tonne>, <om:wattSquareMetre>, <qudtUnit:A_Ab>, <qudtUnit:A_Ab>, <qudtUnit:CAL_IT>, <qudtUnit:CAL_IT-PER-GM>, <qudtUnit:CAL_TH>, <qudtUnit:CAL_TH-PER-GM>, <qudtUnit:C_Ab>, <qudtUnit:CentiBAR>, <qudtUnit:CentiN-M>, <qudtUnit:DEG_C>, <qudtUnit:DEG_F>, <qudtUnit:DWT>, <qudtUnit:DeciB>, <qudtUnit:DeciN-M>, <qudtUnit:DeciS-PER-M>, <qudtUnit:GAL_UK>, <qudtUnit:GAL_US>, <qudtUnit:GON>, <qudtUnit:GR>, <qudtUnit:GRAY>, <qudtUnit:HP_Brake>, <qudtUnit:HZ>, <qudtUnit:HZ>, <qudtUnit:K-PER-MIN>, <qudtUnit:K-PER-W>, <qudtUnit:KiloBAR>, <qudtUnit:KiloBAR>, <qudtUnit:KiloGM-M-PER-SEC>, <qudtUnit:KiloGM-PER-M>, <qudtUnit:KiloGM-PER-SEC>, <qudtUnit:KiloP>, <qudtUnit:M-K>, <qudtUnit:M-PER-K>, <qudtUnit:M3-PER-DAY>, <qudtUnit:M3-PER-HR>, <qudtUnit:MHO_Stat>, <qudtUnit:MI>, <qudtUnit:MI2>, <qudtUnit:MegaA>, <qudtUnit:MegaBAR>, <qudtUnit:MegaGM-PER-M3>, <qudtUnit:MicroGRAY>, <qudtUnit:MicroGRAY>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroIN>, <qudtUnit:MicroM>, <qudtUnit:MicroM>, <qudtUnit:MicroSV>, <qudtUnit:MicroSV>, <qudtUnit:MicroSV-PER-HR>, <qudtUnit:MicroSV-PER-HR>, <qudtUnit:MilliM2>, <qudtUnit:OZ-FT>, <qudtUnit:OZ-IN>, <qudtUnit:OZ_VOL_UK>, <qudtUnit:OZ_VOL_UK>, <qudtUnit:OZ_VOL_US>, <qudtUnit:OZ_VOL_US-PER-DAY>, <qudtUnit:PER-FT3>, <qudtUnit:PER-L>, <qudtUnit:PER-M>, <qudtUnit:PER-M3>, <qudtUnit:PER-MIN>, <qudtUnit:PER-MO>, <qudtUnit:PER-MilliM3>, <qudtUnit:PER-SEC>, <qudtUnit:PER-SEC-M2>, <qudtUnit:PER-SEC-M2>, <qudtUnit:PER-SEC-SR>, <qudtUnit:PER-WK>, <qudtUnit:PINT_UK>, <qudtUnit:PINT_UK>, <qudtUnit:PINT_US>, <qudtUnit:PINT_US-PER-DAY>, <qudtUnit:PINT_US_DRY>, <qudtUnit:PK_UK>, <qudtUnit:PK_UK>, <qudtUnit:PK_US_DRY>, <qudtUnit:QT_UK>, <qudtUnit:QT_UK>, <qudtUnit:QT_US>, <qudtUnit:QT_US-PER-DAY>, <qudtUnit:QT_US_DRY>, <qudtUnit:SV>, <qudtUnit:S_Stat>, <qudtUnit:TON_Metric>, <qudtUnit:UNITLESS>, <qudtUnit:W-M2>, <qudtUnit:W-M2>, <qudtUnit:W-PER-FT2>, <sorepsu:MYA>, <sorepsu:ampere>, <sorepsu:coulomb>, <sorepsu:degreeC>, <sorepsu:degreeF>, <sorepsu:dimensionlessUnit>, <sorepsu:hertz>, <sorepsu:micrometer>, <sorepsu:micron>, <sorepsu:micron>, <sorepsu:millenium>, <sorepsu:million_km2>, <sorepsu:million_km3>, <sorepsu:perPascal>, <sorepsu:perSecond>, <sorepsu:perSecondSquared>, <sorepsu:perSecondSquared>, <sorepsu:perSecondSquared> .
+        om:acre-International, om:ampere, om:centiare, om:centinewton, om:decinewton, om:decisiemens, om:decitesla, om:dryPint-US, om:dryQuart-US, om:exaampere, om:fluidOunce-US, om:gray, om:gray, om:horsepower-Water, om:kilofarad, om:kilofarad, om:kilogramPerHectare, om:kilotonne, om:kiloweber, om:kiloweber, om:megafarad, om:megagramPerLitre, om:metreKilogram, om:microgray, om:micrometre, om:micrometre, om:micron, om:micron, om:micron, om:microsievert, om:one, om:peck-US, om:reciprocalGram, om:reciprocalPascalSecond-Time, om:reciprocalSecond-Time, om:second-TimePerSquareMetre, om:second-TimePerSquareMetre, om:sievert, om:sievert, om:sievert, om:tonne, om:wattSquareMetre, qudtUnit:A_Ab, qudtUnit:A_Ab, qudtUnit:CAL_IT, qudtUnit:CAL_IT-PER-GM, qudtUnit:CAL_TH, qudtUnit:CAL_TH-PER-GM, qudtUnit:C_Ab, qudtUnit:CentiBAR, qudtUnit:CentiN-M, qudtUnit:DEG_C, qudtUnit:DEG_F, qudtUnit:DWT, qudtUnit:DeciB, qudtUnit:DeciN-M, qudtUnit:DeciS-PER-M, qudtUnit:GAL_UK, qudtUnit:GAL_US, qudtUnit:GON, qudtUnit:GR, qudtUnit:GRAY, qudtUnit:HP_Brake, qudtUnit:HZ, qudtUnit:HZ, qudtUnit:K-PER-MIN, qudtUnit:K-PER-W, qudtUnit:KiloBAR, qudtUnit:KiloBAR, qudtUnit:KiloGM-M-PER-SEC, qudtUnit:KiloGM-PER-M, qudtUnit:KiloGM-PER-SEC, qudtUnit:KiloP, qudtUnit:M-K, qudtUnit:M-PER-K, qudtUnit:M3-PER-DAY, qudtUnit:M3-PER-HR, qudtUnit:MHO_Stat, qudtUnit:MI, qudtUnit:MI2, qudtUnit:MegaA, qudtUnit:MegaBAR, qudtUnit:MegaGM-PER-M3, qudtUnit:MicroGRAY, qudtUnit:MicroGRAY, qudtUnit:MicroIN, qudtUnit:MicroIN, qudtUnit:MicroIN, qudtUnit:MicroIN, qudtUnit:MicroM, qudtUnit:MicroM, qudtUnit:MicroSV, qudtUnit:MicroSV, qudtUnit:MicroSV-PER-HR, qudtUnit:MicroSV-PER-HR, qudtUnit:MilliM2, qudtUnit:OZ-FT, qudtUnit:OZ-IN, qudtUnit:OZ_VOL_UK, qudtUnit:OZ_VOL_UK, qudtUnit:OZ_VOL_US, qudtUnit:OZ_VOL_US-PER-DAY, qudtUnit:PER-FT3, qudtUnit:PER-L, qudtUnit:PER-M, qudtUnit:PER-M3, qudtUnit:PER-MIN, qudtUnit:PER-MO, qudtUnit:PER-MilliM3, qudtUnit:PER-SEC, qudtUnit:PER-SEC-M2, qudtUnit:PER-SEC-M2, qudtUnit:PER-SEC-SR, qudtUnit:PER-WK, qudtUnit:PINT_UK, qudtUnit:PINT_UK, qudtUnit:PINT_US, qudtUnit:PINT_US-PER-DAY, qudtUnit:PINT_US_DRY, qudtUnit:PK_UK, qudtUnit:PK_UK, qudtUnit:PK_US_DRY, qudtUnit:QT_UK, qudtUnit:QT_UK, qudtUnit:QT_US, qudtUnit:QT_US-PER-DAY, qudtUnit:QT_US_DRY, qudtUnit:SV, qudtUnit:S_Stat, qudtUnit:TON_Metric, qudtUnit:UNITLESS, qudtUnit:W-M2, qudtUnit:W-M2, qudtUnit:W-PER-FT2, sorepsu:MYA, sorepsu:ampere, sorepsu:coulomb, sorepsu:degreeC, sorepsu:degreeF, sorepsu:dimensionlessUnit, sorepsu:hertz, sorepsu:micrometer, sorepsu:micron, sorepsu:micron, sorepsu:millenium, sorepsu:million_km2, sorepsu:million_km3, sorepsu:perPascal, sorepsu:perSecond, sorepsu:perSecondSquared, sorepsu:perSecondSquared, sorepsu:perSecondSquared .
+
+    om:ThermalConductivity av:correspondsToResource qudtQuantityKind:ThermalConductivity .
+
+    om:ThermalConductivity av:correspondsNotToResource qudtQuantityKind:ThermalConductance .
+    om:VolumeFraction av:correspondsNotToResource qudtQuantityKind:VolumeFlowRate .
+
+    _:aspectQuantityKind av:relevantResource
+        om:ThermalConductivity, om:VolumeFraction, qudtQuantityKind:ThermalConductance, qudtQuantityKind:ThermalConductivity, qudtQuantityKind:VolumeFlowRate .
 }
 
 _:presentCorrespondences a av:Step ;
