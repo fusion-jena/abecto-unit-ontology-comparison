@@ -754,6 +754,8 @@ _:unitComparison a av:Step ;
     pplan:isPrecededBy _:unitMappingUcum ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectUnit ] ,
+        [av:key "languageFilterPatterns" ; av:value "", "en" ] ,
+        [av:key "allowLangTagSkip" ; av:value true ] ,
         [av:key "variables" ; av:value "quantityKind", "symbol", "oneEquals", "zeroAt" ] ;
     .
 
@@ -776,6 +778,8 @@ _:quantityKindComparison a av:Step ;
     pplan:isPrecededBy _:quantityKindMappingLabel ;
     av:hasParameter
         [av:key "aspect" ; av:value _:aspectQuantityKind ] ,
+        [av:key "languageFilterPatterns" ; av:value "", "en" ] ,
+        [av:key "allowLangTagSkip" ; av:value true ] ,
         [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
     .
 
