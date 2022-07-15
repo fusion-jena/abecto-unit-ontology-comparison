@@ -38,3 +38,10 @@ jobs:
         with:
           name: Wikidata Mismatch Finder report
           path: unit-ontology-comparison-wdMismatchFinder.csv
+      - name: Generate Measurement report
+        run: abecto --loadOnly --export measurementsMarkdown=unit-ontology-comparison-measurementsMarkdown.md unit-ontology-comparison-result.trig
+      - name: Archive Measurement report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Measurement report
+          path: unit-ontology-comparison-measurementsMarkdown.md
