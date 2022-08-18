@@ -46,10 +46,10 @@
                 BIND(?offset*-1.0 AS ?zeroAt)
             }
         }
-    """^^av:SparqlQuery ;
+    """ ;
     av:hasVariablePath
-        [ a av:VariablePath ; av:propertyPath "<http://www.w3.org/2004/02/skos/core#notation>"^^av:SparqlPropertyPath ; av:variableName "ucum" ],
-        [ a av:VariablePath ; av:propertyPath "^<http://www.ontology-of-units-of-measure.org/resource/om-2/hasUnit>/<http://www.ontology-of-units-of-measure.org/resource/om-2/hasOff-Set>"^^av:SparqlPropertyPath ; av:variableName "offset" ] ;
+        [ a av:VariablePath ; av:propertyPath "<http://www.w3.org/2004/02/skos/core#notation>" ; av:variableName "ucum" ],
+        [ a av:VariablePath ; av:propertyPath "^<http://www.ontology-of-units-of-measure.org/resource/om-2/hasUnit>/<http://www.ontology-of-units-of-measure.org/resource/om-2/hasOff-Set>" ; av:variableName "offset" ] ;
     .
 []  a av:AspectPattern ;
     av:ofAspect <aspectUnit> ;
@@ -73,9 +73,9 @@
             OPTIONAL { ?unit qudt:conversionMultiplier ?oneEqualsOfBase }
             OPTIONAL { ?unit qudt:conversionOffset ?zeroAt }
         }
-    """^^av:SparqlQuery ;
+    """ ;
     av:hasVariablePath
-        [ a av:VariablePath ; av:propertyPath "<http://qudt.org/schema/qudt/ucumCode>"^^av:SparqlPropertyPath ; av:variableName "ucum" ] ;
+        [ a av:VariablePath ; av:propertyPath "<http://qudt.org/schema/qudt/ucumCode>" ; av:variableName "ucum" ] ;
     .
 []  a av:AspectPattern ;
     av:ofAspect <aspectUnit> ;
@@ -97,7 +97,7 @@
             OPTIONAL { ?unit <tmp:oneEqualsOfBase> ?oneEqualsOfBase }
             OPTIONAL { ?unit <tmp:zeroAtOfBase> ?zeroAt }
         }
-    """^^av:SparqlQuery ;
+    """ ;
     .
 []  a av:AspectPattern ;
     av:ofAspect <aspectUnit> ;
@@ -121,7 +121,7 @@
             OPTIONAL { ?unit wdt:P7825 ?ucum }
             OPTIONAL { ?unit p:P2442/psv:P2442/wikibase:quantityAmount ?oneEqualsOfBase }
         }
-    """^^av:SparqlQuery ;
+    """ ;
     .
 
 <aspectQuantityKind> a av:Aspect ;
@@ -162,7 +162,7 @@
                     ] .
             }
         }
-    """^^av:SparqlQuery ;
+    """ ;
     .
 []  a av:AspectPattern ;
     av:ofAspect <aspectQuantityKind> ;
@@ -186,7 +186,7 @@
                              qudt:dimensionExponentForTime                     ?timeDimensionExponent ;
                              qudt:dimensionlessExponent                        ?dimensionlessExponent .
         }
-    """^^av:SparqlQuery ;
+    """ ;
     .
 []  a av:AspectPattern ;
     av:ofAspect <aspectQuantityKind> ;
@@ -214,15 +214,15 @@
             BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(STRAFTER(?dimensionLabelTexWithOnes,"{\\\\Theta"),"{"),"}")),0) AS ?temperatureDimensionExponent)
             BIND(COALESCE(xsd:integer(STRBEFORE(STRAFTER(?dimensionLabelTexWithOnes,"{T}}^{"),"}")),0) AS ?timeDimensionExponent)
         }
-    """^^av:SparqlQuery ;
+    """ ;
     av:hasVariablePath
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "amountOfSubstanceDimensionExponent" ] ,
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "electricCurrentDimensionExponent" ] ,
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "lengthDimensionExponent" ] ,
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "luminousIntensityDimensionExponent" ] ,
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "massDimensionExponent" ] ,
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "temperatureDimensionExponent" ] ,
-        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>"^^av:SparqlPropertyPath ; av:variableName "timeDimensionExponent" ] ;
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "amountOfSubstanceDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "electricCurrentDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "lengthDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "luminousIntensityDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "massDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "temperatureDimensionExponent" ] ,
+        [ a av:VariablePath ; av:propertyPath "<http://www.wikidata.org/prop/direct/P4020>" ; av:variableName "timeDimensionExponent" ] ;
     .
 
 <om2Source> a av:Step ;
@@ -282,7 +282,7 @@
                         ?item wdt:P4020 [] .
                     }
                 }
-            """^^av:SparqlQuery ] ,
+            """ ] ,
         [av:key "chunkSize" ; av:value 100 ] ,
         [av:key "followUnlimited" ; av:value
             <http://www.wikidata.org/prop/direct/P279> ,
@@ -372,7 +372,7 @@
                     BIND(1.0 / ( ?oneEqualsOfReference * ?oneEqualsOfReference * ?oneEqualsOfReference ) AS ?oneEquals)
                 }
             }
-        """^^av:SparqlQuery ] ,
+        """ ] ,
         [av:key "maxIterations" ; av:value 5 ] ;
     .
 
@@ -595,7 +595,7 @@
                     BIND(?oneEqualsOfReference1 * ?oneEqualsOfReference2 * ?oneEqualsOfReference3 * ?oneEqualsOfReference4 * ?oneEqualsOfReference5 * ?oneEqualsOfReference6 AS ?oneEquals)
                 }
             }
-        """^^av:SparqlQuery ] ,
+        """ ] ,
         [av:key "maxIterations" ; av:value 5 ] ;
     .
 
