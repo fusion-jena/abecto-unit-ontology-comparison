@@ -784,7 +784,7 @@ GRAPH <manualCorrespondences>
     .
 
 <quantityKindMappingLabel> a av:Step ;
-    rdfs:label "Quantity Kind Mapping using labels"@en;
+    rdfs:label "Quantity Kind Mapping Using Labels"@en;
     pplan:isStepOfPlan <plan> ;
     av:processorClass abecto:JaroWinklerMappingProcessor ;
     pplan:isPrecededBy <presentCorrespondences> ;
@@ -804,13 +804,14 @@ GRAPH <manualCorrespondences>
         [av:key "aspect" ; av:value <aspectQuantityKind> ] ,
         [av:key "languageFilterPatterns" ; av:value "", "en" ] ,
         [av:key "allowLangTagSkip" ; av:value true ] ,
-        [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "dimensionlessExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent" ] ;
+        [av:key "variables" ; av:value "symbol", "timeDimensionExponent", "luminousIntensityDimensionExponent", "amountOfSubstanceDimensionExponent", "electricCurrentDimensionExponent", "temperatureDimensionExponent", "massDimensionExponent", "lengthDimensionExponent"#, "dimensionlessExponent"
+        ] ;
     .
 
 <completeness> a av:Step;
     rdfs:label "Assess Completeness"@en;
     pplan:isStepOfPlan <plan> ;
-    av:processorClass abecto:CompletenessProcessor ;
+    av:processorClass abecto:PopulationComparisonProcessor ;
     pplan:isPrecededBy <unitMappingUcum>, <quantityKindMappingLabel> ;
     av:hasParameter
         [av:key "aspects" ; av:value <aspectUnit>, <aspectQuantityKind> ] ;
