@@ -774,7 +774,7 @@ GRAPH <manualCorrespondences>
 <unitComparison> a av:Step ;
     rdfs:label "Unit Comparison"@en;
     pplan:isStepOfPlan <plan> ;
-    av:processorClass abecto:LiteralValueComparisonProcessor ;
+    av:processorClass abecto:PropertyComparisonProcessor ;
     pplan:isPrecededBy <unitMappingUcum> ;
     av:hasParameter
         [av:key "aspect" ; av:value <aspectUnit> ] ,
@@ -798,7 +798,7 @@ GRAPH <manualCorrespondences>
 <quantityKindComparison> a av:Step ;
     rdfs:label "Quantity Kind Comparison"@en;
     pplan:isStepOfPlan <plan> ;
-    av:processorClass abecto:LiteralValueComparisonProcessor ;
+    av:processorClass abecto:PropertyComparisonProcessor ;
     pplan:isPrecededBy <quantityKindMappingLabel> ;
     av:hasParameter
         [av:key "aspect" ; av:value <aspectQuantityKind> ] ,
