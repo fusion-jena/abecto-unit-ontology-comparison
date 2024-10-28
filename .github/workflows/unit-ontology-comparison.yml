@@ -4,44 +4,47 @@ on: workflow_dispatch
 jobs:
   compare:
     runs-on: ubuntu-latest
-    container: ghcr.io/fusion-jena/abecto:v2.1.0
+    container: ghcr.io/fusion-jena/abecto:v3.0.0
     steps:
       - name: Checkout Project
-        uses: actions/checkout@v2
-      - name: Run ABECTO Unit Ontology Comparison
-        run: abecto --trig unit-ontology-comparison-result.trig unit-ontology-comparison.trig
-      - name: Generate OM deviations report
+        uses: actions/checkout@v4
+      - name: Run ABECTO Unit Ontology Comparison and Store Results
+        run: |
+          abecto \
+            --trig unit-ontology-comparison-result.trig \
+            --export deviations=unit-ontology-comparison-deviations.csv \
+            --export measurementsMarkdown=unit-ontology-comparison-measurements.md \
+            unit-ontology-comparison.trig
+      - name: Archive Comparison Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Comparison Results
+          path: unit-ontology-comparison-*
+      - name: Generate OM-only deviations report
         run: abecto --loadOnly --reportOn "http://www.ontology-of-units-of-measure.org/resource/om-2/" --export deviations=unit-ontology-comparison-deviations-om2.csv unit-ontology-comparison-result.trig
-      - name: Archive OM deviations report
-        uses: actions/upload-artifact@v2
+      - name: Archive OM-only deviations report
+        uses: actions/upload-artifact@v4
         with:
-          name: OM deviations report
+          name: OM-only deviations report
           path: unit-ontology-comparison-deviations-om2.csv
-      - name: Generate QUDT deviations report
+      - name: Generate QUDT-only deviations report
         run: abecto --loadOnly --reportOn "http://qudt.org/" --export deviations=unit-ontology-comparison-deviations-qudt.csv unit-ontology-comparison-result.trig
-      - name: Archive QUDT deviations report
-        uses: actions/upload-artifact@v2
+      - name: Archive QUDT-only deviations report
+        uses: actions/upload-artifact@v4
         with:
-          name: QUDT deviations report
+          name: QUDT-only deviations report
           path: unit-ontology-comparison-deviations-qudt.csv
-      - name: Generate SWEET deviations report
+      - name: Generate SWEET-only deviations report
         run: abecto --loadOnly --reportOn "http://sweetontology.net/" --export deviations=unit-ontology-comparison-deviations-sweet.csv unit-ontology-comparison-result.trig
-      - name: Archive SWEET deviations report
-        uses: actions/upload-artifact@v2
+      - name: Archive SWEET-only deviations report
+        uses: actions/upload-artifact@v4
         with:
-          name: SWEET deviations report
+          name: SWEET-only deviations report
           path: unit-ontology-comparison-deviations-sweet.csv
       - name: Generate Wikidata Mismatch Finder report
         run: abecto --loadOnly --export wdMismatchFinder=unit-ontology-comparison-wdMismatchFinder.csv unit-ontology-comparison-result.trig
       - name: Archive Wikidata Mismatch Finder report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Wikidata Mismatch Finder report
           path: unit-ontology-comparison-wdMismatchFinder.csv
-      - name: Generate Measurement report
-        run: abecto --loadOnly --export measurementsMarkdown=unit-ontology-comparison-measurementsMarkdown.md unit-ontology-comparison-result.trig
-      - name: Archive Measurement report
-        uses: actions/upload-artifact@v2
-        with:
-          name: Measurement report
-          path: unit-ontology-comparison-measurementsMarkdown.md
