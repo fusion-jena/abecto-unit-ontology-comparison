@@ -266,8 +266,10 @@
     av:hasParameter
         [av:key "service" ; av:value <https://query.wikidata.org/sparql> ] ,
         [av:key "query" ; av:value """
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
                 PREFIX wd: <http://www.wikidata.org/entity/>
+                PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
                 SELECT *
                 WHERE {
                     {
@@ -275,6 +277,7 @@
                         ?item wdt:P31/wdt:P279* wd:Q47574 .
                         FILTER(NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q8142 }) # without currencies
                         FILTER(NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q11639620 }) # without monetary subunits
+                        FILTER(NOT EXISTS { ?item rdf:type ontolex:LexicalSense }) # without lexical senses
                     }
                     UNION
                     {
@@ -326,6 +329,26 @@
                     # baseUnits
                     om:InternationalSystemOfUnits om:hasBaseUnit ?unit .
                     BIND(1.0 AS ?oneEqualsOfBase)
+				} UNION {
+					# singularUnit without factor
+					?unit a om:SingularUnit .
+					?unit om:hasUnit ?referenceUnit .
+					?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+					FILTER NOT EXISTS {?unit om:hasFactor ?factor .}
+					BIND(?oneEqualsOfReference AS ?oneEqualsOfBase)
+				} UNION {
+					# singularUnit with factor & unitMultiple
+					?unit om:hasUnit ?referenceUnit .
+					?referenceUnit <tmp:oneEqualsOfBase> ?oneEqualsOfReference .
+					?unit om:hasFactor ?factor .
+					BIND(?oneEqualsOfReference * ?factor AS ?oneEqualsOfBase)
+				} UNION {
+					# units multiplication
+					?unit om:hasTerm1 ?term1 .
+					?unit om:hasTerm2 ?term2 .
+					?term1 <tmp:oneEqualsOfBase> ?oneEqualsTerm1 .
+					?term2 <tmp:oneEqualsOfBase> ?oneEqualsTerm2 .
+					BIND(?oneEqualsTerm1 * ?oneEqualsTerm2 AS ?oneEqualsOfBase)
                 } UNION {
                     # fractionUnits
                     ?unit om:hasNumerator ?numerator .
@@ -373,7 +396,7 @@
                 }
             }
         """ ] ,
-        [av:key "maxIterations" ; av:value 5 ] ;
+        [av:key "maxIterations" ; av:value 20 ] ;
     .
 
 <sweet3conversions> a av:Step ;

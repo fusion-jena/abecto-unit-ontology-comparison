@@ -4,7 +4,7 @@ on: workflow_dispatch
 jobs:
   compare:
     runs-on: ubuntu-latest
-    container: ghcr.io/fusion-jena/abecto:v3.0.1
+    container: ghcr.io/fusion-jena/abecto:v3.1.2
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
