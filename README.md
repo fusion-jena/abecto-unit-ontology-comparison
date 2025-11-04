@@ -10,34 +10,32 @@ There is a GitHub Actions Workflow configured in [.github/workflows/unit-ontolog
 
 To running the project on your machine, please take the following steps:
 
-1. clone and build ABECTO
+1. download ABECTO
 
 	```
-	git clone --depth 1 -b v1.0.1 git@github.com:fusion-jena/abecto.git
-	mvn -f abecto -B -Dmaven.test.skip=true package
+	curl -L -O https://github.com/fusion-jena/abecto/releases/download/v3.1.2/abecto.jar
 	```
 
 2. clone this project
 
 	```
-	git clone git@github.com:fusion-jena/abecto-unit-ontology-comparison.git
+	git clone --depth=1 git@github.com:fusion-jena/abecto-unit-ontology-comparison.git
 	```
 
 3. execute the comparison pipeline defined in [unit-ontology-comparison.trig](unit-ontology-comparison.trig)
 
 	```
-	java -jar abecto/target/abecto.jar --trig abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig abecto-unit-ontology-comparison/unit-ontology-comparison.trig
+	java -jar abecto.jar --trig abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig abecto-unit-ontology-comparison/unit-ontology-comparison.trig
 	```
 
 4. create several reports
 
 	```
-	java -jar abecto/target/abecto.jar --loadOnly --export wdMismatchFinder=abecto-unit-ontology-comparison/unit-ontology-comparison-wdMismatchFinder.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
-	java -jar abecto/target/abecto.jar --loadOnly --reportOn "http://www.ontology-of-units-of-measure.org/resource/om-2/" --export deviations=abecto-unit-ontology-comparison/unit-ontology-comparison-deviations-om2.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
-	java -jar abecto/target/abecto.jar --loadOnly --reportOn "http://qudt.org/" --export deviations=abecto-unit-ontology-comparison/unit-ontology-comparison-deviations-qudt.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
-	java -jar abecto/target/abecto.jar --loadOnly --reportOn "http://sweetontology.net/" --export deviations=abecto-unit-ontology-comparison/unit-ontology-comparison-deviations-sweet.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
-	java -jar abecto/target/abecto.jar --loadOnly --export wdMismatchFinder=abecto-unit-ontology-comparison/unit-ontology-comparison-wdMismatchFinder.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
-	java -jar abecto/target/abecto.jar --loadOnly --export measurementsMarkdown=abecto-unit-ontology-comparison/unit-ontology-comparison-measurementsMarkdown.md abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
+	java -jar abecto.jar --loadOnly --reportOn "http://www.ontology-of-units-of-measure.org/resource/om-2/" --export deviations=abecto-unit-ontology-comparison/unit-ontology-comparison-deviations-om2.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
+	java -jar abecto.jar --loadOnly --reportOn "http://qudt.org/" --export deviations=abecto-unit-ontology-comparison/unit-ontology-comparison-deviations-qudt.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
+	java -jar abecto.jar --loadOnly --reportOn "http://sweetontology.net/" --export deviations=abecto-unit-ontology-comparison/unit-ontology-comparison-deviations-sweet.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
+	java -jar abecto.jar --loadOnly --export wdMismatchFinder=abecto-unit-ontology-comparison/unit-ontology-comparison-wdMismatchFinder.csv abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
+	java -jar abecto.jar --loadOnly --export measurementsMarkdown=abecto-unit-ontology-comparison/unit-ontology-comparison-measurementsMarkdown.md abecto-unit-ontology-comparison/unit-ontology-comparison-result.trig
 	```
 
 ## Licenses
