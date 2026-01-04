@@ -103,11 +103,8 @@
     av:ofAspect <aspectUnit> ;
     av:associatedDataset <http://www.wikidata.org/> ;
     av:definingQuery """
-		PREFIX p: <http://www.wikidata.org/prop/>
-		PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        PREFIX wikibase: <http://wikiba.se/ontology#>
         PREFIX wdt: <http://www.wikidata.org/prop/direct/>
         PREFIX wd: <http://www.wikidata.org/entity/>
         SELECT ?unit ?label ?symbol ?quantityKind ?ucum ?oneEqualsOfBase
@@ -119,7 +116,7 @@
             OPTIONAL { ?unit wdt:P5061 ?symbol }
             OPTIONAL { ?unit wdt:P111 ?quantityKind }
             OPTIONAL { ?unit wdt:P7825 ?ucum }
-            OPTIONAL { ?unit p:P2370/psv:P2370/wikibase:quantityAmount ?oneEqualsOfBase }
+            OPTIONAL { ?unit wdt:P2370 ?oneEqualsOfBase }
         }
     """ ;
     .
@@ -289,8 +286,6 @@
         [av:key "chunkSize" ; av:value 100 ] ,
         [av:key "followUnlimited" ; av:value
             <http://www.wikidata.org/prop/direct/P279> ,
-            <http://www.wikidata.org/prop/statement/value/P2370> ,
-            <http://www.wikidata.org/prop/P2370>,
             <http://www.wikidata.org/prop/P7973> ] ,
         [av:key "ignoreInverse" ; av:value
             <http://wikiba.se/ontology#quantityUnit>,
